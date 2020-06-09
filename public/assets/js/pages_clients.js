@@ -1,24 +1,26 @@
 $(function() {
 
+  //=============== Открытие боковой панели ================================//
   function openSidenav() {
     $('.clients-wrapper').addClass('clients-sidebox-open');
   }
 
+  //=============== Закрытие боковой панели ================================//
   function closeSidenav() {
     $('.clients-wrapper').removeClass('clients-sidebox-open');
     $('.clients-table tr.bg-light').removeClass('bg-light');
   }
 
+  //=============== Выбранный Абитуриент ================================//
   function selectClient(row) {
     openSidenav();
     $('.clients-table tr.bg-light').removeClass('bg-light');
     $(row).addClass('bg-light' + $(row).firstChild);
   }
 
+  //=============== Событие при клике на строку таблицы AbitTable ================================//
   $('body').on('click', '.clients-table tr', function() {
-
    var id_person = this.cells[0].textContent;
-
    $.ajax({
         dataType: 'json',
         url: '/loadSidebar',
@@ -33,15 +35,14 @@ $(function() {
           $('.text-body-otch').text('Отчество: ' + data.LastName);
           $('.text-body-birthday').text('Дата Рождения:' + data.Birthday);
           $('#shtb').DataTable().destroy();
-          testTable(id_person);
-
-          // Select client
+          PersonsStatmentTable(id_person);
           selectClient(this);
         },
       });
   });
 
-  function testTable(id_person){
+  //=============== Таблица поданных абитуриентом заявлений ================================//
+  function PersonsStatmentTable(id_person){
     $('#shtb').dataTable({
 
         processing: true,
@@ -49,29 +50,78 @@ $(function() {
         paging:false,
         searching: false,
         info: false,
-        //  serverSide: true,
         ajax: {
-             url: '/ShifrT',
+             url: '/PersonsStatmentTable',
              data: {
                  idPersons: id_person
              },
            },
-
       });
   }
 
+//=============== Кнопка для закрытия боковой панели ================================//
   $('body').on('click', '.clients-sidebox-close', function(e) {
     e.preventDefault();
     closeSidenav();
   });
 
-  // Setup scrollbars
-
+  //=============== Setup scrollbars ================================//
   $('.clients-scroll').each(function() {
     new PerfectScrollbar(this, {
       suppressScrollX: true,
       wheelPropagation: true
     });
   });
+
+  //=============== Таблица для отображения абитуриентов AbitTable ================================//
+    $('#table').dataTable({
+        processing: true,
+        //  serverSide: true,
+        ajax: '/loadTable',
+        //Заменить с eng на ru
+        language:
+            {
+                "processing": "Подождите...",
+                "search": "Поиск:",
+                "lengthMenu": "Показать _MENU_ записей",
+                "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "infoEmpty": "Записи с 0 до 0 из 0 записей",
+                "infoFiltered": "(отфильтровано из _MAX_ записей)",
+                "infoPostFix": "",
+                "loadingRecords": "Загрузка записей...",
+                "zeroRecords": "Записи отсутствуют.",
+                "emptyTable": "В таблице отсутствуют данные",
+                "paginate":
+                    {
+                        "first": "Первая",
+                        "previous": "Предыдущая",
+                        "next": "Следующая",
+                        "last": "Последняя"
+                    },
+                "aria":
+                    {
+                        "sortAscending": ": активировать для сортировки столбца по возрастанию",
+                        "sortDescending": ": активировать для сортировки столбца по убыванию"
+                    },
+                "select":
+                    {
+                        "rows":
+                            {
+                                "_": "Выбрано записей: %d",
+                                "0": "Кликните по записи для выбора",
+                                "1": "Выбрана одна запись"
+                            }
+                    }
+            },
+        //Отрисовать кнопки
+        createdRow: function (row, data, index)
+        {
+            $('td', row).eq(6).html('').append
+            (
+                '<a href="/profile" class="btn btn-default btn-xs icon-btn md-btn-flat product-tooltip" title="Открыть"><i class="ion ion-md-create"></i></a>&nbsp;' +
+                '<a href="javascript:void(0)" class="btn btn-default btn-xs icon-btn md-btn-flat product-tooltip" title="Удалить"><i class="ion ion-md-close"></i></a>'
+            );
+        }
+    });
 
 });

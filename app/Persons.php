@@ -9,6 +9,7 @@ class Persons extends Model
   protected $table = 'persons';
   public $timestamps = false;
 
+  //=============== ТАБЛИЦА АБИТУРИЕНТОВ ================================//
   public static function DashboardTable(){
     $item_abit = Persons::
         select
@@ -23,8 +24,6 @@ class Persons extends Model
             'persons.phone_two as PhoneTwo'
 
         )
-        //->join('abit_statements', 'persons.id', '=', 'abit_statements.person_id')
-       // ->join('abit_examCard', 'state_id', '=', 'abit_statements.id')
        ->leftJoin('abit_persPrivilege', 'abit_persPrivilege.pers_id', '=', 'persons.id')
        ->leftJoin('abit_typePrivilege', 'abit_typePrivilege.id', '=', 'abit_persPrivilege.priv_id')
        ->where('persons.pers_type', 'a')
@@ -32,6 +31,7 @@ class Persons extends Model
 
       $k = [];
       $i = 0;
+
       foreach ($item_abit as $key) {
 
           $k +=[$i =>[$key->id_Abit,
@@ -42,15 +42,18 @@ class Persons extends Model
                       $key->email,'']];
           $i++;
       }
+
       $arr=array
       (
           "data" => $k
       );
+
       return $arr;
   }
 
+  //=============== БОКОВАЯ ПАНЕЛЬ ================================//
   public static function DashboardSidebar($id_person){
-    $item_abit = Persons::
+    $query = Persons::
         select
         (
             'persons.famil as FirstName',
@@ -59,13 +62,21 @@ class Persons extends Model
             'persons.photo_url as Avatar',
             'persons.birthday as Birthday'
         )
-        //->join('abit_statements', 'persons.id', '=', 'abit_statements.person_id')
-       // ->join('abit_examCard', 'state_id', '=', 'abit_statements.id')
        ->where('id',$id_person)
         ->first();
-    return $item_abit;
+
+    $arr = [
+      "FirstName" => $query->FirstName,
+      "Name" => $query->Name,
+      "LastName" => $query->LastName,
+      "Avatar" => $query->Avatar,
+      "Birthday" => date("d.m.Y", strtotime($query->Birthday))
+    ];
+
+    return $arr;
   }
 
+  //=============== ТАБЛИЦА ПОДАННЫХ АБИТУРИЕНТОМ ЗАЯВЛЕНИЙ ================================//
   public static function DashboardPersonsStatment($id_person){
     $query = AStatments::
         select
@@ -80,13 +91,15 @@ class Persons extends Model
 
         $k = [];
         $i = 0;
+
         foreach ($query as $key) {
 
             $k +=[$i =>[$key->shifr,
                         $key->SpecName,
-                        $key->DateReturn]];
+                        date("d.m.Y", strtotime($key->DateReturn))]];
             $i++;
         }
+
         $arr=array
         (
             "data" => $k

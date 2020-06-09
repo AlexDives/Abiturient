@@ -9,59 +9,6 @@
 @section('scripts')
     <script src="{{ asset('assets/js/pages_clients.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/datatables/datatables.js') }}"></script>
-    <script>
-        $(function() {
-            $('#table').dataTable({
-                processing: true,
-                //  serverSide: true,
-                ajax: '/loadTable',
-                //Заменить с eng на ru
-                language:
-                    {
-                        "processing": "Подождите...",
-                        "search": "Поиск:",
-                        "lengthMenu": "Показать _MENU_ записей",
-                        "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
-                        "infoEmpty": "Записи с 0 до 0 из 0 записей",
-                        "infoFiltered": "(отфильтровано из _MAX_ записей)",
-                        "infoPostFix": "",
-                        "loadingRecords": "Загрузка записей...",
-                        "zeroRecords": "Записи отсутствуют.",
-                        "emptyTable": "В таблице отсутствуют данные",
-                        "paginate":
-                            {
-                                "first": "Первая",
-                                "previous": "Предыдущая",
-                                "next": "Следующая",
-                                "last": "Последняя"
-                            },
-                        "aria":
-                            {
-                                "sortAscending": ": активировать для сортировки столбца по возрастанию",
-                                "sortDescending": ": активировать для сортировки столбца по убыванию"
-                            },
-                        "select":
-                            {
-                                "rows":
-                                    {
-                                        "_": "Выбрано записей: %d",
-                                        "0": "Кликните по записи для выбора",
-                                        "1": "Выбрана одна запись"
-                                    }
-                            }
-                    },
-                //Отрисовать кнопки
-                createdRow: function (row, data, index)
-                {
-                    $('td', row).eq(6).html('').append
-                    (
-                        '<a href="/profile" class="btn btn-default btn-xs icon-btn md-btn-flat product-tooltip" title="Открыть"><i class="ion ion-md-create"></i></a>&nbsp;' +
-                        '<a href="javascript:void(0)" class="btn btn-default btn-xs icon-btn md-btn-flat product-tooltip" title="Удалить"><i class="ion ion-md-close"></i></a>'
-                    );
-                }
-            });
-        });
-    </script>
 @endsection
 
 @section('content')

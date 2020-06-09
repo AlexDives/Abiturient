@@ -31,6 +31,7 @@ class DashboardController extends Controller
 
                 ]);
     }
+
     // ------------ ЗАГРУЗКА ТАБЛИЦЫ АБИТУРИЕНТОВ ------------------------//
     public function loadTable()
     {
@@ -39,20 +40,15 @@ class DashboardController extends Controller
         return json_encode($arr, true);
     }
 
+    // ------------ ЗАГРУЗКА ВЫДВИЖНОЙ ПАНЕЛИ ------------------------//
     public function loadSidebar(Request $request){
-      $query = Persons::DashboardSidebar($request->idPersons);
-      $arr = [
-        "FirstName" => $query->FirstName,
-        "Name" => $query->Name,
-        "LastName" => $query->LastName,
-        "Avatar" => $query->Avatar,
-        "Birthday" => date("d.m.Y", strtotime($query->Birthday))
-      ];
+      $arr = Persons::DashboardSidebar($request->idPersons);    
       header("Content-type: application/json; charset=utf-8");
-
       return json_encode($arr, true);
     }
-    public function ShifrT(Request $request){
+
+    // ------------ ЗАГРУЗКА ТАБЛИЦЫ ПОДАННЫХ АБИТУРИЕНТОМ ЗАЯВЛЕНИЙ ------------------------//
+    public function PersonsStatmentTable(Request $request){
       $arr = Persons::DashboardPersonsStatment($request->idPersons);
       header("Content-type: application/json; charset=utf-8");
       return json_encode($arr, true);

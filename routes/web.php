@@ -30,8 +30,8 @@ Route::get('/dashboard', 'DashboardController@index')->name('dashboards.dashboar
 Route::get('/loadTable', 'DashboardController@loadTable');
 //=============== Вызгрузка данных json в sidebar dashboard ================================//
 Route::get('/loadSidebar', 'DashboardController@loadSidebar');
-//=============== Вызгрузка данных json в ShifrT dashboard ================================//
-Route::get('/ShifrT', 'DashboardController@ShifrT');
+//=============== Вызгрузка данных json в sidebar таблицу поданных заявлений dashboard ================================//
+Route::get('/PersonsStatmentTable', 'DashboardController@PersonsStatmentTable');
 //=============== Отображение шаблона Направления ================================//
 Route::get('/direction', 'DirectionController@index');
 //=============== Отображение факультетот в шаблоне Направления ================================//
