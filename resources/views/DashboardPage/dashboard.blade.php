@@ -66,7 +66,7 @@
 
 @section('content')
     <!-- `.clients-wrapper` fills all available space of container -->
-    <div class="clients-wrapper clients-sidebox-open">
+    <div class="clients-wrapper">
 
         <!-- `.clients-content` fills all available space of `clients-wrapper` -->
         <div class="clients-content clients-scroll container-p-x container-p-y">
@@ -91,9 +91,9 @@
                         <th>№</th>
                         <th>Ф.И.О.</th>
                         <th>Льготы</th>
-                        <th>Паспорт</th>
-                        <th>Факультет</th>
-                        <th>Специал.</th>
+                        <th>Телефон №1</th>
+                        <th>Телефон №2</th>
+                        <th>Email</th>
                         <th>Действия</th>
                     </tr>
                     </thead>
@@ -112,13 +112,11 @@
 
                 <!-- Client info -->
                 <div class="text-center p-4">
-                    <img src=" {{asset('assets/img/avatars/9.png')}}" class="ui-w-100 rounded-circle mb-4" alt="">
-                    <h5 class="mb-1"><a href="javascript:void(0)" class="text-body">Фамилия: Alex</a></h5>
-                    <h5 class="mb-1"><a href="javascript:void(0)" class="text-body">Имя: Alex</a></h5>
-                    <h5 class="mb-1"><a href="javascript:void(0)" class="text-body">Отчество: Alex</a></h5>
-                    <div class="text-muted small mb-2">Дата рождения: 12.12.1995</div>
-                    <div class="small mb-4">Тел:+380 999 999 99
-                    </div>
+                    <img src=" " class="ui-w-100 rounded-circle mb-4 persons-avatar-sidebar" alt="">
+                    <h5 class="mb-1"><a href="javascript:void(0)" class="text-body text-body-famil"></a></h5>
+                    <h5 class="mb-1"><a href="javascript:void(0)" class="text-body text-body-name"></a></h5>
+                    <h5 class="mb-1"><a href="javascript:void(0)" class="text-body text-body-otch"></a></h5>
+                    <div class="text-muted small mb-2 text-body-birthday">Дата рождения: 12.12.1995</div>
                 </div>
                 <!-- / Client info -->
                 <hr class="border-light m-0">
@@ -136,7 +134,7 @@
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane fade active show" id="tab_spesial">
-                            <table class="table card-table">
+                            <table class="table card-table" id="shtb">
                                 <thead>
                                 <tr>
                                     <th>Шифр</th>
@@ -145,16 +143,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td class="align-middle">O2Псх306</td>
-                                    <td class="align-middle">Психология</td>
-                                    <td class="align-middle">11.05.2020</td>
-                                </tr>
-                                <tr>
-                                    <td class="align-middle">O2Псх155</td>
-                                    <td class="align-middle">Психология</td>
-                                    <td class="align-middle"></td>
-                                </tr>
+
                                 </tbody>
                             </table>
 

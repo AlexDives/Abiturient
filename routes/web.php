@@ -28,6 +28,10 @@ Route::get('/verificate', 'RegisterController@verificate');
 Route::get('/dashboard', 'DashboardController@index')->name('dashboards.dashboard-1')->middleware('check');
 //=============== Вызгрузка данных json в таблицу dashboard ================================//
 Route::get('/loadTable', 'DashboardController@loadTable');
+//=============== Вызгрузка данных json в sidebar dashboard ================================//
+Route::get('/loadSidebar', 'DashboardController@loadSidebar');
+//=============== Вызгрузка данных json в ShifrT dashboard ================================//
+Route::get('/ShifrT', 'DashboardController@ShifrT');
 //=============== Отображение шаблона Направления ================================//
 Route::get('/direction', 'DirectionController@index');
 //=============== Отображение факультетот в шаблоне Направления ================================//
