@@ -42,7 +42,7 @@ class DashboardController extends Controller
 
     // ------------ ЗАГРУЗКА ВЫДВИЖНОЙ ПАНЕЛИ ------------------------//
     public function loadSidebar(Request $request){
-      $arr = Persons::DashboardSidebar($request->idPersons);    
+      $arr = Persons::DashboardSidebar($request->idPersons);
       header("Content-type: application/json; charset=utf-8");
       return json_encode($arr, true);
     }
@@ -50,6 +50,13 @@ class DashboardController extends Controller
     // ------------ ЗАГРУЗКА ТАБЛИЦЫ ПОДАННЫХ АБИТУРИЕНТОМ ЗАЯВЛЕНИЙ ------------------------//
     public function PersonsStatmentTable(Request $request){
       $arr = Persons::DashboardPersonsStatment($request->idPersons);
+      header("Content-type: application/json; charset=utf-8");
+      return json_encode($arr, true);
+    }
+
+    // ------------ ЗАГРУЗКА ТАБЛИЦЫ ЭКЗАМЕНОВ АБИТУРИЕНТА ------------------------//
+    public function PersonsExamsTable(Request $request){
+      $arr = Persons::DashboardPersonsExams($request->idPersons);
       header("Content-type: application/json; charset=utf-8");
       return json_encode($arr, true);
     }

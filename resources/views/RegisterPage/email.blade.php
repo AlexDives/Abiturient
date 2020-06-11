@@ -73,7 +73,7 @@
 																<tr style="border-collapse:collapse;">
 																	<td align="center" style="padding:0;Margin:0;font-size:0px;">
 																		<a href="{{ asset('/') }}" target="_blank" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;font-size:14px;text-decoration:underline;color:#CCCCCC;">
-																			<img src="{{ asset('images/logo.png') }}" alt="Система тестировани" title="Система тестировани" width="109" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;">
+																			<img src="{{ asset('images/logo.png') }}" alt="Абитуриент" title="Абитуриент" width="109" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;">
 																		</a>
 																	</td>
 																</tr>
@@ -100,7 +100,7 @@
 																<tr style="border-collapse:collapse;">
 																	<td align="left" style="padding:0;Margin:0;">
 																		<h1 style="Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;font-size:30px;font-style:normal;font-weight:normal;color:#4A7EB0;">
-																			Подтверждение регистрации
+																			{{ isset($login) ? 'Регистрация' : 'Подтверждение регистрации' }} 
 																		</h1>
 																	</td>
 																</tr>
@@ -123,31 +123,44 @@
 																		</p>
 																	</td>
 																</tr>
-																<tr style="border-collapse:collapse;">
-																	<td align="left" bgcolor="transparent" style="padding:0;Margin:0;">
-																		<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:21px;color:#666666;">
-																			Вы регистрировали аккаунт на сайте abit.ltsu.org. <br>
-																			Для дальнейшего использования аккаунта, Вам необходимо пройти верификацию E-mail адреса, для этого нажмите кнопку "Верифицировать E-mail".<br>
-																			Пройти верификацию можно в течении 1 дня с момента регистрации.
-																		</p>
-																	</td>
-																</tr>
-																<tr style="border-collapse:collapse;">
-																	<td align="center" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;">
-																		<span class="es-button-border" style="border-style:solid;border-color:#4A7EB0;background:#2CB543;border-width:0px;display:inline-block;border-radius:0px;width:auto;">
-																			<a href="{{ $link }}" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:18px;color:#4A7EB0;border-style:solid;border-color:#EFEFEF;border-width:10px 25px;display:inline-block;background:#EFEFEF;border-radius:0px;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;">
-																				Верифицировать E-mail
-																			</a>
-																		</span>
-																	</td>
-																</tr>
-																<tr style="border-collapse:collapse;">
-																	<td align="left" style="padding:0;Margin:0;">
-																		<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:21px;color:#666666;">
-																			Если Вы не регистрировались на сайте abit.ltsu.org, тогда просто проигнорируйте данное письмо.
-																		</p>
-																	</td>
-																</tr>
+																@if(isset($login))
+																	<tr style="border-collapse:collapse;">
+																		<td align="left" bgcolor="transparent" style="padding:0;Margin:0;">
+																			<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:21px;color:#666666;">
+																				Вас зарегистрировали на сайте abit.ltsu.org. <br>
+																				Ваш логин: {{ $login }} <br>
+																				Ваш пароль: {{ $pass }} <br><br>
+																				Для дальнейшего использования аккаунта, Вам необходимо перейти по данной ссылке: https://abit.ltsu.org 
+																			</p>
+																		</td>
+																	</tr>
+																@else
+																	<tr style="border-collapse:collapse;">
+																		<td align="left" bgcolor="transparent" style="padding:0;Margin:0;">
+																			<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:21px;color:#666666;">
+																				Вы регистрировали аккаунт на сайте abit.ltsu.org. <br>
+																				Для дальнейшего использования аккаунта, Вам необходимо пройти верификацию E-mail адреса, для этого нажмите кнопку "Верифицировать E-mail".<br>
+																				Пройти верификацию можно в течении 1 дня с момента регистрации.
+																			</p>
+																		</td>
+																	</tr>
+																	<tr style="border-collapse:collapse;">
+																		<td align="center" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;">
+																			<span class="es-button-border" style="border-style:solid;border-color:#4A7EB0;background:#2CB543;border-width:0px;display:inline-block;border-radius:0px;width:auto;">
+																				<a href="{{ $link }}" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:18px;color:#4A7EB0;border-style:solid;border-color:#EFEFEF;border-width:10px 25px;display:inline-block;background:#EFEFEF;border-radius:0px;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;">
+																					Верифицировать E-mail
+																				</a>
+																			</span>
+																		</td>
+																	</tr>
+																	<tr style="border-collapse:collapse;">
+																		<td align="left" style="padding:0;Margin:0;">
+																			<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:21px;color:#666666;">
+																				Если Вы не регистрировались на сайте abit.ltsu.org, тогда просто проигнорируйте данное письмо.
+																			</p>
+																		</td>
+																	</tr>
+																@endif
 															</table>
 														</td>
 													</tr>

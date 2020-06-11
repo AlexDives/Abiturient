@@ -32,6 +32,8 @@ Route::get('/loadTable', 'DashboardController@loadTable');
 Route::get('/loadSidebar', 'DashboardController@loadSidebar');
 //=============== Вызгрузка данных json в sidebar таблицу поданных заявлений dashboard ================================//
 Route::get('/PersonsStatmentTable', 'DashboardController@PersonsStatmentTable');
+//=============== Вызгрузка данных json в sidebar таблицу экзаменов dashboard ================================//
+Route::get('/PersonsExamsTable', 'DashboardController@PersonsExamsTable');
 //=============== Отображение шаблона Направления ================================//
 Route::get('/direction', 'DirectionController@index');
 //=============== Отображение факультетот в шаблоне Направления ================================//
@@ -44,7 +46,6 @@ Route::get('/scanPhoto', 'ScanController@index');
 Route::get('/insert_abit', 'ProfileController@index_InsertAbit')->middleware('check');
 //=============== Заполнение информации о направлении абитуриента(уже создан) ================================//
 Route::get('/success_insert_abit', 'ProfileController@index_Success_Abit')->middleware('check');
-
 
 //=============== Разрыв сессии ================================//
 Route::get('logout', 'DashboardController@logout')->name('logout');

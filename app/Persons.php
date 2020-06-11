@@ -11,32 +11,26 @@ class Persons extends Model
 
   //=============== ТАБЛИЦА АБИТУРИЕНТОВ ================================//
   public static function DashboardTable(){
+    //$tkt = APersPriv::select('id as ctt')->whereRaw('abit_persPrivilege.pers_id', 'persons.id')->count();
+
     $item_abit = Persons::
-        select
-        (
-            'persons.id as id_Abit',
-            'persons.famil as FirstName',
-            'persons.name as Name',
-            'persons.otch as LastName',
-            'abit_typePrivilege.name as Privilegename',
-            'persons.email',
-            'persons.phone_one as PhoneOne',
-            'persons.phone_two as PhoneTwo'
-
-        )
-       ->leftJoin('abit_persPrivilege', 'abit_persPrivilege.pers_id', '=', 'persons.id')
-       ->leftJoin('abit_typePrivilege', 'abit_typePrivilege.id', '=', 'abit_persPrivilege.priv_id')
-       ->where('persons.pers_type', 'a')
-       ->get();
-
+    selectRaw(
+      'persons.id as id_Abit, persons.famil as FirstName,
+      persons.name as Name, persons.otch as LastName,
+      persons.email, persons.phone_one as PhoneOne, persons.phone_two as PhoneTwo,
+      (select count(ap.id) from abit_persPrivilege ap
+          where ap.pers_id = persons.id) as countPriv'
+      )
+      ->where('persons.pers_type', 'a')
+      ->get();
       $k = [];
       $i = 0;
-
       foreach ($item_abit as $key) {
-
+        if($key->countPriv != 0) $privilage = '&#10003;';
+        else   $privilage = '';
           $k +=[$i =>[$key->id_Abit,
                       $key->FirstName.' '.$key->Name.' '.$key->LastName, //FIO
-                      $key->Privilegename,
+                      $privilage,
                       $key->PhoneOne,
                       $key->PhoneTwo,
                       $key->email,'']];
@@ -75,6 +69,42 @@ class Persons extends Model
 
     return $arr;
   }
+
+  //=============== ТАБЛИЦА ЭКЗАМЕНОВ АБИТУРИЕНТА ================================//
+  public static function DashboardPersonsExams($id_person){
+    $query = AExamsCard::
+        select
+        (
+          'abit_predmets.name as Predmet',
+          'abit_examCard.date_exam as DateExam',
+          'abit_examCard.ball as Ball'
+        )
+        ->leftjoin('abit_examenGroup', 'abit_examenGroup.id', '=', 'abit_examCard.exam_id')
+        ->leftjoin('abit_predmets', 'abit_predmets.id', '=', 'abit_examenGroup.predmet_id')
+        ->leftjoin('abit_statements', 'abit_statements.id', '=', 'abit_examCard.state_id')
+        ->where('abit_statements.person_id', $id_person)
+        ->get();
+
+        $k = [];
+        $i = 0;
+
+        foreach ($query as $key) {
+
+            $k +=[$i =>[$key->Predmet,
+                        date("d.m.Y", strtotime($key->DateExam)),
+                        $key->Ball,
+                        ]];
+            $i++;
+        }
+
+        $arr=array
+        (
+            "data" => $k
+        );
+
+        return $arr;
+  }
+
 
   //=============== ТАБЛИЦА ПОДАННЫХ АБИТУРИЕНТОМ ЗАЯВЛЕНИЙ ================================//
   public static function DashboardPersonsStatment($id_person){

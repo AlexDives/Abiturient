@@ -96,7 +96,7 @@
 
                         </div>
                         <div class="tab-pane fade" id="tab-predmet">
-                            <table class="table card-table">
+                            <table class="table card-table" id="dashboard-abit-exams-table">
                                 <thead>
                                 <tr>
                                     <th>Предмет</th>
@@ -105,12 +105,6 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td class="align-middle">Русский язык</td>
-                                    <td class="align-middle">12.12.2019</td>
-                                    <td class="align-middle">78.3</td>
-                                </tr>
-
                                 </tbody>
                             </table>
                         </div>

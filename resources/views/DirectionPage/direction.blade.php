@@ -3,12 +3,15 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 @endsection
 
 @section('scripts')
     <!-- Dependencies -->
     <script src="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/datatables/datatables.js') }}"></script>
     <script>
         function change_branch()
         {
@@ -28,7 +31,7 @@
                         $('#abit_facultet').html(data);
                         $('#abit_facultet').prop('disabled', false);
                     },
-                    error: function(msg) { 
+                    error: function(msg) {
                         alert('Error, try again');
                     }
                 });
@@ -43,7 +46,7 @@
                 $('#abit_oku').prop('disabled', 'disabled');
             }
         }
-        
+
         function change_facultet()
         {
             var abit_facultet = $('#abit_facultet').val();
@@ -99,15 +102,7 @@
                             <option value="-1">Выберите элемент</option>
                         </select>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label class="form-label">Направление
-                            <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" name="abit_group_name" id="abit_group_name" disabled>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-3">
                         <label class="form-label">Форма обучения
                             <span class="text-danger">*</span>
                         </label>
@@ -117,59 +112,74 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-row col-md-6">
-                        <div class="form-group col-md-6">
+                    <div class="form-group col-md-3">
+                        <label class="form-label">Образовательный уровень
+                            <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-control" data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="abit_oku" id="abit_oku" disabled>
+                            @foreach ($stlevel as $st)
+                                <option value="{{ $st->id }}">{{ $st->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                      <label class="form-label">Направление
+                          <span class="text-danger">*</span>
+                      </label>
+                      <input type="text" class="form-control" name="abit_group_name" id="abit_group_name" disabled>
+                  </div>
+
+                        <div class="form-group col-md-3">
                             <label class="form-label">Ник
                                 <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" name="abit_nick" id="abit_nick" disabled>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-3">
                             <label class="form-label">Шифр направления
                                 <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" name="abit_shifr" id="abit_shifr" disabled>
                         </div>
-                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Выбор теста для...
-                        <span class="text-danger">*</span>
+                <div class="form-group form-group-predmet">
+                  <div class="form-label-sticky">
+                    <label class="form-label">
+                      <span>Выбрать предметы</span>
+                      <span>
+                        <input type="text" name="search_predmet" id="search_predmet">
+                        <button type="button" name="button">Поиск</button>
+                      </span>
                     </label>
-                    <select class="form-control" data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="abit_oku" id="abit_oku" disabled>
-                        @foreach ($stlevel as $st)
-                            <option value="{{ $st->id }}">{{ $st->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"> Выбрать предметы</label>
-                    <table class="table table-hover" style="cursor: default;">
-                        <thead>
-                            <tr>
-                                <th class="text-center">№</th>
-                                <th class="text-center">Наименование</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($predmet_vuz as $pv)
-                                <tr>
-                                    <td class="text-center">
-                                        <label class="custom-control custom-checkbox m-0">
-                                            <input type="checkbox" class="custom-control-input" name="predmet_id[{{ $pv->id }}]" id="predmet_id[{{ $pv->id }}]" value="{{ $pv->id }}">
-                                                <span class="custom-control-label">{{ $pv->id }}</span>
-                                        </label>
-                                    </td>
-                                    <td class="text-left">{{ $pv->name }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <label class="form-label">
+                      <span>№</span>
+                      <span>Наименование</span>
+                      <span style="justify-content:flex-end; margin-right:25px;">Образовательный уровень</span>
+                    </label>
+                  </div>
+                  <table class="table table-hover" style="cursor: default;">
+                      <tbody>
+                          @foreach ($predmet_vuz as $pv)
+                              <tr>
+                                  <td class="text-center">
+                                      <label class="custom-control custom-checkbox m-0">
+                                          <input type="checkbox" class="custom-control-input" name="predmet_id[{{ $pv->Pid }}]" id="predmet_id[{{ $pv->Pid }}]" value="{{ $pv->Pid }}">
+                                              <span class="custom-control-label"></span>
+                                      </label>
+                                  </td>
+                                  <td class="text-left">{{ $pv->Predmetname }}</td>
+                                  <td class="text-left">{{ $pv->StName }}</td>
+                              </tr>
+                          @endforeach
+                      </tbody>
+                  </table>
                 </div>
                 <input type="submit" class="btn btn-primary" value="Создать">
             </form>
         </div>
-        
+
     </div>
     <div class="form-group">
         <label class="form-label">Список направлений</label>

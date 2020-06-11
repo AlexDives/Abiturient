@@ -151,6 +151,7 @@
 	</h4>
 	<form action="/profilesave" method="POST" enctype="multipart/form-data">
 		{{ csrf_field() }}
+		<input type="hidden" name="pid" value='{{ isset($person) ? $person->id : -1  }}'>
 		<input type="hidden" id="active_list" name="active_list" value="{{ Session::has('active_list') ? Session::get('active_list') : '' }}">
 		<div class="card overflow-hidden">
 			<div class="row no-gutters row-bordered row-border-light">
@@ -174,19 +175,19 @@
 									<label class="form-label">Фамилия
 										<span class="text-danger">*</span>
 									</label>
-									<input name="FirstName" type="text" class="form-control " value="{{ $person->famil }}" >
+									<input name="FirstName" type="text" class="form-control " value="{{ isset($person) ? $person->famil : '' }}" >
 								</div>
 								<div class="form-group">
 									<label class="form-label">Имя
 										<span class="text-danger">*</span>
 									</label>
-									<input name="Name" type="text" class="form-control " value="{{ $person->name }}" >
+									<input name="Name" type="text" class="form-control " value="{{ isset($person) ? $person->name : ''  }}" >
 								</div>
 								<div class="form-group">
 									<label class="form-label">Отчество
 										<span class="text-danger">*</span>
 									</label>
-									<input name="LastName" type="text" class="form-control " value="{{ $person->otch }}" >
+									<input name="LastName" type="text" class="form-control " value="{{ isset($person) ? $person->otch : ''  }}" >
 								</div>
 								<div class="row">
 									<div class="col">
@@ -194,7 +195,7 @@
 											<label class="form-label">Дата рождения
 												<span class="text-danger">*</span>
 											</label>
-											<input type="text" id="date_birth" name="birthday" class="form-control " placeholder="__.__.____"  value="{{ date('d.m.Y', strtotime($person->birthday)) }}" >
+											<input type="text" id="date_birth" name="birthday" class="form-control " placeholder="__.__.____"  value="{{ isset($person) ? date('d.m.Y', strtotime($person->birthday)) : '' }}" >
 										</div>
 									</div>
 									<div class="col">
@@ -203,8 +204,8 @@
 												<span class="text-danger">*</span>
 											</label>
 											<select class="selectpicker show-tick form-control " data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark"  name="gender" >
-												<option value="Муж" {{ $person->gender == "Муж" ? "selected" : "" }}>Мужчина</option>
-												<option value="Жен" {{ $person->gender == "Жен" ? "selected" : "" }}>Женщина</option>
+												<option value="Муж" {{ isset($person) ? $person->gender == "Муж" ? "selected" : "" : ''}}>Мужчина</option>
+												<option value="Жен" {{ isset($person) ? $person->gender == "Жен" ? "selected" : "" : ''}}>Женщина</option>
 											</select>
 										</div>
 									</div>
@@ -215,33 +216,44 @@
 											<label class="form-label">Номер телефона
 												<span class="text-danger">*</span>
 											</label>
-											<input type="text" id="phone_abit" name="phone_one" class="form-control " placeholder="(___) ___-_____" value="{{ $person->phone_one }}" >
+											<input type="text" id="phone_abit" name="phone_one" class="form-control " placeholder="(___) ___-_____" value="{{ isset($person) ? $person->phone_one : '' }}" >
 										</div>
 									</div>
 									<div class="col">
 										<div class="form-group">
 											<label class="form-label">Второй номер телефона</label>
-											<input type="text" id="phone_abit" name="phone_two" class="form-control " placeholder="(___) ___-_____" value="{{ $person->phone_two }}">
+											<input type="text" id="phone_abit" name="phone_two" class="form-control " placeholder="(___) ___-_____" value="{{ isset($person) ? $person->phone_two : ''}}">
+										</div>
+									</div>
+									<div class="col">
+										<div class="form-group">
+											<label class="form-label">E-mail</label>
+											<input type="text" id="email_abit" name="email_abit" class="form-control " placeholder="noreply@gmail.com" value="{{ isset($person) ? $person->email : ''}}">
 										</div>
 									</div>
 								</div>
-								<div class="form-group">
-									<label class="form-label">Гражданство</label>
-									<select class="selectpicker show-tick form-control " data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="citizen">
-										<option value="LNR" {{ $person->citizen == "LNR" ? "selected" : "" }}>ЛНР</option>
-										<option value="DNR" {{ $person->citizen == "DNR" ? "selected" : "" }}>ДНР</option>
-										<option value="UA" {{ $person->citizen == "UA" ? "selected" : "" }}>Украина</option>
-										<option value="RU" {{ $person->citizen == "RU" ? "selected" : "" }}>Россия</option>
-									</select>
-								</div>
-								<div class="form-group">
-									<label class="form-label">Владение языками</label>
-									<select class="selectpicker" data-style="btn-default" multiple data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="language[]">
-										<option value="EN" {{ $person->english_lang == 'T' ? 'selected' : '' }}>Английский</option>
-										<option value="FR" {{ $person->franch_lang  == 'T' ? 'selected' : '' }}>Французский</option>
-										<option value="GE" {{ $person->deutsch_lang == 'T' ? 'selected' : '' }}>Немецкий</option>
-										<option value="OT" {{ $person->other_lang   != null ? 'selected' : '' }}>Другой</option>
-									</select>
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<label class="form-label">Гражданство</label>
+											<select class="selectpicker show-tick form-control " data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="citizen">
+												<option value="LNR" {{ isset($person) ? $person->citizen == "LNR" ? "selected" : "" : '' }}>ЛНР</option>
+												<option value="DNR" {{ isset($person) ? $person->citizen == "DNR" ? "selected" : "" : ''}}>ДНР</option>
+												<option value="UA" {{ isset($person) ? $person->citizen == "UA" ? "selected" : "" : ''}}>Украина</option>
+												<option value="RU" {{ isset($person) ? $person->citizen == "RU" ? "selected" : "" : ''}}>Россия</option>
+											</select>
+										</div>
+									</div>
+									<div class="col">
+										<div class="form-group">
+											<label class="form-label">Владение языками</label>
+											<select class="selectpicker" data-style="btn-default" multiple data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="language[]">
+												<option value="EN" {{ isset($person) ? $person->english_lang == 'T' ? 'selected' : '' : ''}}>Английский</option>
+												<option value="FR" {{ isset($person) ? $person->franch_lang  == 'T' ? 'selected' : '' : ''}}>Французский</option>
+												<option value="GE" {{ isset($person) ? $person->deutsch_lang == 'T' ? 'selected' : '' : ''}}>Немецкий</option>
+											</select>
+										</div>
+									</div>
 								</div>
 								<div class="form-group">
 									<label class="form-label">Тип льготы
@@ -263,43 +275,43 @@
 									<label class="form-label">Государство
 										<span class="text-danger">*</span>
 									</label>
-									<input name="country" type="text" class="form-control " value="{{ $person->country }}" >
+									<input name="country" type="text" class="form-control " value="{{ isset($person) ? $person->country : '' }}" >
 								</div>
 								<div class="form-group">
 									<label class="form-label">Обсласть
 										<span class="text-danger">*</span>
 									</label>
-									<input name="adr_obl" type="text" class="form-control " value="{{ $person->adr_obl }}" >
+									<input name="adr_obl" type="text" class="form-control " value="{{ isset($person) ? $person->adr_obl : '' }}" >
 								</div>
 								<div class="form-group">
 									<label class="form-label">Район
 										<span class="text-danger">*</span>
 									</label>
-									<input name="adr_rajon" type="text" class="form-control " value="{{ $person->adr_rajon }}" >
+									<input name="adr_rajon" type="text" class="form-control " value="{{ isset($person) ? $person->adr_rajon : '' }}" >
 								</div>
 								<div class="form-group">
 									<label class="form-label">Город
 										<span class="text-danger">*</span>
 									</label>
-									<input name="adr_city" type="text" class="form-control " value="{{ $person->adr_city }}" >
+									<input name="adr_city" type="text" class="form-control " value="{{ isset($person) ? $person->adr_city : '' }}" >
 								</div>
 								<div class="form-group">
 									<label class="form-label">Улица
 										<span class="text-danger">*</span>
 									</label>
-									<input name="adr_street" type="text" class="form-control " value="{{ $person->adr_street }}" >
+									<input name="adr_street" type="text" class="form-control " value="{{ isset($person) ? $person->adr_street : '' }}" >
 								</div>
 								<div class="row">
 									<div class="col">
 										<div class="form-group">
 											<label class="form-label">Дом</label>
-											<input type="text" name="adr_house" class="form-control " value="{{ $person->adr_house }}">
+											<input type="text" name="adr_house" class="form-control " value="{{ isset($person) ? $person->adr_house : '' }}">
 										</div>
 									</div>
 									<div class="col">
 										<div class="form-group">
 											<label class="form-label">Квартира</label>
-											<input type="text" name="adr_flatroom" class="form-control " value="{{ $person->adr_flatroom }}">
+											<input type="text" name="adr_flatroom" class="form-control " value="{{ isset($person) ? $person->adr_flatroom : '' }}">
 										</div>
 									</div>
 								</div>
@@ -309,7 +321,7 @@
 								</label>
 								<div class="form-group" id="fact">
 									<label class="form-label">Фактическое проживание</label>
-									<input name="fact_residence" type="text" class="form-control " value="{{ $person->fact_residence }}" >
+									<input name="fact_residence" type="text" class="form-control " value="{{ isset($person) ? $person->fact_residence : '' }}" >
 								</div>
 							</div>
 						</div>
@@ -324,8 +336,8 @@
 												<span class="text-danger">*</span>
 											</label>
 											<select class="selectpicker show-tick form-control " data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="type_doc" >
-												<option value="Паспорт" {{ $person->type_doc == "Паспорт" ? "selected" : "" }}>Паспорт</option>
-												<option value="Свидетельство" {{ $person->type_doc == "Свидетельство" ? "selected" : "" }}>Свидетельство</option>
+												<option value="Паспорт" {{ isset($person) ? $person->type_doc == "Паспорт" ? "selected" : "" : ''}}>Паспорт</option>
+												<option value="Свидетельство" {{ isset($person) ? $person->type_doc == "Свидетельство" ? "selected" : "" : ''}}>Свидетельство</option>
 											</select>
 										</div>
 									</div>
@@ -334,7 +346,7 @@
 											<label class="form-label">Дата выдачи
 												<span class="text-danger">*</span>
 											</label>
-											<input name="pasp_date" id="date_vidach" type="text" class="form-control " placeholder="__.__.____" value="{{ $person->pasp_date }}" >
+											<input name="pasp_date" id="date_vidach" type="text" class="form-control " placeholder="__.__.____" value="{{ isset($person) ? $person->pasp_date : ''}}" >
 										</div>
 									</div>
 									<div class="col">
@@ -342,7 +354,7 @@
 											<label class="form-label">Идентификационный код
 												<span class="text-danger">*</span>
 											</label>
-											<input name="indkod" id="mask-number" type="text" class="form-control " value="{{ $person->indkod }}" >
+											<input name="indkod" id="mask-number" type="text" class="form-control " value="{{ isset($person) ? $person->indkod : ''}}" >
 										</div>
 									</div>
 								</div>
@@ -352,7 +364,7 @@
 											<label class="form-label">Серия документа
 												<span class="text-danger">*</span>
 											</label>
-											<input name="pasp_ser" type="text" class="form-control " value="{{ $person->pasp_ser }}">
+											<input name="pasp_ser" type="text" class="form-control " value="{{ isset($person) ? $person->pasp_ser : ''}}">
 										</div>
 									</div>
 									<div class="col">
@@ -360,7 +372,7 @@
 											<label class="form-label">Номер документа
 												<span class="text-danger">*</span>
 											</label>
-											<input name="pasp_num" type="text" class="form-control " value="{{ $person->pasp_num }}">
+											<input name="pasp_num" type="text" class="form-control " value="{{ isset($person) ? $person->pasp_num : ''}}">
 										</div>
 									</div>
 								</div>
@@ -368,7 +380,7 @@
 									<label class="form-label">Где и кем выдан документ
 										<span class="text-danger">*</span>
 									</label>
-									<input name="pasp_vid" type="text" class="form-control " value="{{ $person->pasp_vid }}">
+									<input name="pasp_vid" type="text" class="form-control " value="{{ isset($person) ? $person->pasp_vid : ''}}">
 								</div>
 							</div>
 						</div>
@@ -451,21 +463,21 @@
 								<div class="form-row">
 									<div class="form-group col-md-4">
 										<label class="form-label">ФИО (Отца)</label>
-										<input type="text" class="form-control" name="father_name" value="{{ $person->father_name }}">
+										<input type="text" class="form-control" name="father_name" value="{{ isset($person) ? $person->father_name : ''}}">
 									</div>
 									<div class="form-group col-md-3">
 										<label class="form-label">Номер телефона (Отца)</label>
-										<input type="text" id="phone_father" name="father_phone" class="form-control" placeholder="__.__.____" value="{{ $person->father_phone }}">
+										<input type="text" id="phone_father" name="father_phone" class="form-control" placeholder="__.__.____" value="{{ isset($person) ? $person->father_phone  : ''}}">
 									</div>
 								</div>
 								<div class="form-row">
 									<div class="form-group col-md-4">
 										<label class="form-label">ФИО (Матери)</label>
-										<input type="text" class="form-control" name="mother_name" value="{{ $person->mother_name }}">
+										<input type="text" class="form-control" name="mother_name" value="{{ isset($person) ? $person->mother_name : ''}}">
 									</div>
 									<div class="form-group col-md-3">
 										<label class="form-label">Номер телефона (Матери)</label>
-										<input type="text" id="phone_mother" name="mother_phone" class="form-control" placeholder="__.__.____"value="{{ $person->mother_phone }}">
+										<input type="text" id="phone_mother" name="mother_phone" class="form-control" placeholder="__.__.____"value="{{ isset($person) ? $person->mother_phone: ''}}">
 									</div>
 								</div>
 							</div>
@@ -530,62 +542,32 @@
 											</tr>
 										</thead>
 										<tbody>
-											@if(count($pers_zno) > 0)
-												@foreach ($pers_zno as $pz)
-													<tr onclick="select_zno({{ '\''.$pz->type_sertificate.'\',\''.$pz->ser_sert.'\',\''.$pz->num_sert.'\',\''.$pz->predmet_id.'\',\''.$pz->ball_sert.'\',\''.$pz->date_sert.'\'' }});">
-														<th class="text-center" scope="row">{{ $loop->iteration }}</th>
-														<td class="text-center">{{ $pz->type_sertificate }}</td>
-														<td class="text-center">{{ $pz->ser_sert.' '.$pz->num_sert }}</td>
-														<td class="text-center">{{ $pz->pred_name }}</td>
-														<td class="text-center">{{ $pz->ball_sert }}</td>
-														<td class="text-center">{{ $pz->date_sert }}</td>
-														<td class="text-center"><span onclick="del({{ $pz->id }})" class="text-danger" style="cursor: pointer;">X</span></td>
+											@if(isset($pers_zno))
+												@if(count($pers_zno) > 0)
+													@foreach ($pers_zno as $pz)
+														<tr onclick="select_zno({{ '\''.$pz->type_sertificate.'\',\''.$pz->ser_sert.'\',\''.$pz->num_sert.'\',\''.$pz->predmet_id.'\',\''.$pz->ball_sert.'\',\''.$pz->date_sert.'\'' }});">
+															<th class="text-center" scope="row">{{ $loop->iteration }}</th>
+															<td class="text-center">{{ $pz->type_sertificate }}</td>
+															<td class="text-center">{{ $pz->ser_sert.' '.$pz->num_sert }}</td>
+															<td class="text-center">{{ $pz->pred_name }}</td>
+															<td class="text-center">{{ $pz->ball_sert }}</td>
+															<td class="text-center">{{ $pz->date_sert }}</td>
+															<td class="text-center"><span onclick="del({{ $pz->id }})" class="text-danger" style="cursor: pointer;">X</span></td>
+														</tr>
+													@endforeach
+												@else
+													<tr>
+														<td colspan="7" class="text-center">
+															Нет сертификатов
+														</td>
 													</tr>
-												@endforeach
-											@else
-												<tr>
-													<td colspan="7" class="text-center">
-														Нет сертификатов
-													</td>
-												</tr>
+												@endif
 											@endif
 										</tbody>
 									</table>
 								</div>
 							</div>
 						</div>
-
-						<!-- 7 -->
-						<!--<div class="tab-pane fade {{ Session::has('active_list') ? Session::get('active_list') == 'info-photo' ? 'show active' : '' : '' }}" id="info-photo">
-							<div class="card-body pb-2">
-
-								<div class="col">
-									<div class="form-group">
-										<label class="form-label">Выбранные документы</label>
-										<select class="selectpicker" data-style="btn-default" multiple data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="abit_typeDoc">
-											@foreach ($abit_typeDoc as $atd)
-												<option value="{{ $atd->id }}">{{ $atd->name }}</option>
-											@endforeach
-										</select>
-									</div>
-								</div>
-								<div class="col">
-
-									<div class="cui-example">
-										<form action="{{route('updlode.dock')}}" class="dropzone needsclick" id="dropzone-demo">
-											<div class="dz-message needsclick">
-												Загрузить фотографии
-
-											</div>
-											<div class="fallback">
-												<input name="file" type="file" multiple="">
-											</div>
-										</form>
-									</div>
-								</div>
-							</div>
-						</div> 
-					-->
 					</div>
 				</div>
 			</div>
