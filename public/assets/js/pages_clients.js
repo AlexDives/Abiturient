@@ -37,9 +37,14 @@ $(function() {
                 PersonsStatmentTable(id_person);
                 PersonsExamsTable(id_person)
                 selectClient(this);
+                //setTimeout(keek, 200);
+              // var table = $('#shtb').DataTable();
+              //  table.on( 'draw', function () {
+             //  } );
             },
         });
     });
+
 
     //=============== Таблица поданных абитуриентом заявлений ================================//
     function PersonsStatmentTable(id_person) {
@@ -57,6 +62,12 @@ $(function() {
                     idPersons: id_person
                 },
             },
+           createdRow: function( row, data, dataIndex ) {
+
+            if($(row).children(':nth-child(3)').text() != ''){
+             $(row).addClass('return-row');
+            }
+           },
         });
     }
 

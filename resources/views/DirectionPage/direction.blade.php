@@ -21,6 +21,7 @@
                 $.ajax({
                     url: '/direction/get_facultet',
                     type: 'POST',
+                async: true,
                     data: {
                         abit_branch: abit_branch
                     },
@@ -57,6 +58,7 @@
                 $('#abit_shifr').prop('disabled', false);
                 $('#abit_nick').prop('disabled', false);
                 $('#abit_oku').prop('disabled', false);
+                change_stlevel();
             }
             else
             {
@@ -66,6 +68,94 @@
                 $('#abit_nick').prop('disabled', 'disabled');
                 $('#abit_oku').prop('disabled', 'disabled');
             }
+        }
+
+        function change_stlevel()
+        {
+            var id = $('#abit_oku').val();
+            $.ajax({
+                url: '/direction/get_predmet',
+                type: 'POST',
+                data: {
+                    stid : id
+                },
+                async: true,
+                headers: {
+                    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    $('#table_predmet').html(data);
+                },
+                error: function(msg) {
+                    alert('Error, try again');
+                }
+            });
+        }
+
+        function search_pred()
+        {
+            var text = $('#search_predmet').val();
+            var id = $('#abit_oku').val();
+            $.ajax({
+                url: '/direction/search_predmet',
+                type: 'POST',
+                data: {
+                    stid : id,
+                    text : text
+                },
+                async: true,
+                headers: {
+                    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    $('#table_predmet').html(data);
+                },
+                error: function(msg) {
+                    alert('Error, try again');
+                }
+            });
+        }
+
+        function selected_group(data)
+        {
+            $('#abit_facultet option[value="' + data[0].fk_id +'"]').prop('selected', true);
+            $('#abit_fo_id option[value="' + data[0].fo_id +'"]').prop('selected', true);
+            $('#abit_oku option[value="' + data[0].st_id +'"]').prop('selected', true);
+            change_stlevel();
+            $('#abit_group_name').val(data[0].name);
+            $('#abit_nick').val(data[0].nick);
+            $('#abit_shifr').val(data[0].minid);
+
+            $('#abit_facultet').prop('disabled', false);
+            $('#abit_group_name').prop('disabled', false);
+            $('#abit_fo_id').prop('disabled', false);
+            $('#abit_shifr').prop('disabled', false);
+            $('#abit_nick').prop('disabled', false);
+            $('#abit_oku').prop('disabled', false);
+        }
+
+        function select_group(id, branch_id)
+        {
+            $('#agid').val(id);
+            $('#abit_branch option[value="' + branch_id +'"]').prop('selected', true);
+            change_branch()
+            $.ajax({
+                url: '/direction/get_group',
+                type: 'POST',
+                data: {
+                    gid : id
+                },
+                async: true,
+                headers: {
+                    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    selected_group(data);
+                },
+                error: function(msg) {
+                    alert('Error, try again');
+                }
+            });
         }
     </script>
 @endsection
@@ -116,7 +206,7 @@
                         <label class="form-label">Образовательный уровень
                             <span class="text-danger">*</span>
                         </label>
-                        <select class="form-control" data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="abit_oku" id="abit_oku" disabled>
+                        <select onchange="change_stlevel();" class="form-control" data-style="btn-default" data-icon-base="ion" data-tick-icon="ion-md-checkmark" name="abit_oku" id="abit_oku" disabled>
                             @foreach ($stlevel as $st)
                                 <option value="{{ $st->id }}">{{ $st->name }}</option>
                             @endforeach
@@ -130,53 +220,39 @@
                       </label>
                       <input type="text" class="form-control" name="abit_group_name" id="abit_group_name" disabled>
                   </div>
-
-                        <div class="form-group col-md-3">
-                            <label class="form-label">Ник
-                                <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" name="abit_nick" id="abit_nick" disabled>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label class="form-label">Шифр направления
-                                <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" name="abit_shifr" id="abit_shifr" disabled>
-                        </div>
+                <div class="form-group col-md-3">
+                    <label class="form-label">Ник
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" name="abit_nick" id="abit_nick" disabled>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="form-label">Шифр направления
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" name="abit_shifr" id="abit_shifr" disabled>
+                </div>
                 </div>
                 <div class="form-group form-group-predmet">
-                  <div class="form-label-sticky">
-                    <label class="form-label">
-                      <span>Выбрать предметы</span>
-                      <span>
-                        <input type="text" name="search_predmet" id="search_predmet">
-                        <button type="button" name="button">Поиск</button>
-                      </span>
-                    </label>
-                    <label class="form-label">
-                      <span>№</span>
-                      <span>Наименование</span>
-                      <span style="justify-content:flex-end; margin-right:25px;">Образовательный уровень</span>
-                    </label>
-                  </div>
-                  <table class="table table-hover" style="cursor: default;">
-                      <tbody>
-                          @foreach ($predmet_vuz as $pv)
-                              <tr>
-                                  <td class="text-center">
-                                      <label class="custom-control custom-checkbox m-0">
-                                          <input type="checkbox" class="custom-control-input" name="predmet_id[{{ $pv->Pid }}]" id="predmet_id[{{ $pv->Pid }}]" value="{{ $pv->Pid }}">
-                                              <span class="custom-control-label"></span>
-                                      </label>
-                                  </td>
-                                  <td class="text-left">{{ $pv->Predmetname }}</td>
-                                  <td class="text-left">{{ $pv->StName }}</td>
-                              </tr>
-                          @endforeach
-                      </tbody>
-                  </table>
+                    <div class="form-label-sticky">
+                        <!--<label class="form-label">
+                            <span>Выбрать предметы</span>
+                            <span>
+                                <input type="text" name="search_predmet" id="search_predmet" onkeyup="search_pred();">
+                            </span>
+                        </label>-->
+                        <label class="form-label">
+                            <span>№</span>
+                            <span>Наименование</span>
+                            <span style="justify-content:flex-end; margin-right:25px;">Образовательный уровень</span>
+                        </label>
+                    </div>
+                    <table class="table table-hover" style="cursor: default;">
+                        <tbody id="table_predmet">
+                        </tbody>
+                    </table>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Создать">
+                <input type="submit" class="btn btn-primary" value="Сохранить">
             </form>
         </div>
 
@@ -197,7 +273,7 @@
             </thead>
             <tbody>
                 @foreach ($abit_group as $ag)
-                    <tr>
+                    <tr onclick="select_group({{ $ag->id.','.$ag->branch_id }});">
                         <td class="text-center"><span class="custom-control-label">{{ $ag->id }}</span></td>
                         <td class="text-left">{{ $ag->branch_name }}</td>
                         <td class="text-left">{{ $ag->facult_name }}</td>

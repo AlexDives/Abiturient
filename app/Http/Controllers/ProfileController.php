@@ -92,74 +92,342 @@ class ProfileController extends Controller
 	{
 		$role = session('role_id');
 		$users = session('user_name');
+		if ($request->session()->get('role_id') != 5) 
+		{
+			$pid = $request->session()->has('person_id') ? $request->session()->get('person_id') : $request->pid;
+		}
+		else $pid = $request->session()->get('person_id');
+
+		$abit_branch = DB::table('abit_branch')->get();
+
 		return view('ProfilePage.success_profile',
 			[
-				'title' => 'Заявления',
-				'role' => $role,
-				'username' => $users
+				'title' 		=> 'Заявления',
+				'role' 			=> $role,
+				'username' 		=> $users,
+				'abit_branch'	=> $abit_branch,
+				'person_id'		=> $pid
 			]);
 	}
+
+	public function get_facultet(Request $request)
+	{
+		$fk = DB::table('abit_facultet')->where('branch_id', $request->bid)->orderBy('name', 'asc')->get();
+		$data = "<option>Выберите элемент</option>";
+		foreach ($fk as $f) {
+			$data .= "<option value='".$f->id."'>".$f->name."</option>";
+		}
+		return $data;
+	}
+
+	public function get_stlevel(Request $request)
+	{
+		$stlevel = DB::table('abit_group as g')->distinct()->leftjoin('abit_stlevel as st', 'st.id', 'g.st_id')->where('g.fk_id', $request->fkid)->select('st.id', 'st.name')->orderBy('st.id', 'asc')->get();
+		$data = "<option>Выберите элемент</option>";
+		foreach ($stlevel as $st) {
+			$data .= "<option value='".$st->id."'>".$st->name."</option>";
+		}
+		return $data;
+	}
+
+	public function get_form_obuch(Request $request)
+	{
+		$formobuch = DB::table('abit_group as g')->distinct()->leftjoin('abit_formObuch as fo', 'fo.id', 'g.fo_id')->where('g.fk_id', $request->fkid)->where('g.st_id', $request->stid)->select('fo.id', 'fo.name')->orderBy('fo.id', 'asc')->get();
+		$data = "<option>Выберите элемент</option>";
+		foreach ($formobuch as $fo) {
+			$data .= "<option value='".$fo->id."'>".$fo->name."</option>";
+		}
+		return $data;
+	}
+
+	public function get_group(Request $request)
+	{
+		$group = DB::table('abit_group as g')
+					->where('g.fk_id', $request->fkid)
+					->where('g.st_id', $request->stid)
+					->where('g.fo_id', $request->foid)
+					->whereNotIn('g.id', function($query) use ($request){
+						$query->select('group_id')
+						->from('abit_statements')
+						->where('person_id', $request->pid)
+						->whereNull('date_return');
+					})
+					->orderBy('g.name', 'asc')->get();
+		$data = "<option>Выберите элемент</option>";
+		foreach ($group as $g) {
+			$data .= "<option value='".$g->id."'>".$g->name."</option>";
+		}
+		return $data;
+	}
+	
+	public function statement_return(Request $request)
+	{
+		if($request->has('ag'))
+		{
+			if ($request->ag > 0)
+			{
+				$statement = DB::table('abit_statements')->where('id', $request->ag)->where('person_id', $request->pid)->first();
+				if ($statement->date_return == null)
+				{
+					DB::table('abit_statements')->where('id', $statement->id)->update([
+						'date_return'	=> date('Y-m-d H:i:s', time()),
+						'comment_return'=> 'Абитуриент отозвал заявление'
+					]);
+				}
+			}
+		}
+		return back();
+	}
+
+	public function statement_create(Request $request)
+	{
+		if($request->has('abit_group'))
+		{
+			if ($request->abit_group > 0)
+			{
+				$tmp = DB::table('abit_statements')->where('group_id', $request->abit_group)->where('person_id', $request->pid)->count();
+				if ($tmp == 0)
+				{
+					$count_in_group = DB::table('abit_statements')->where('group_id', $request->abit_group)->orderBy('id', 'desc')->first();
+					if ($count_in_group == null) $count_in_group = 1;
+					else $count_in_group = $count_in_group->queue_number + 1;
+
+					$group = DB::table('abit_group as g')->leftjoin('abit_formObuch as fo', 'fo.id', 'g.fo_id')->select('g.*', 'fo.nick as fo_nick')->where('g.id', $request->abit_group)->first();
+
+					$shifr = $group->fo_nick.$group->fo_id.$group->nick.$count_in_group;
+					
+					$AStatement_id = DB::table('abit_statements')->insertGetId([
+						'person_id' 		=> $request->pid,
+						'group_id'			=> $request->abit_group,
+						'queue_number'		=> $count_in_group,
+						'shifr_statement'	=> $shifr
+					]);
+
+					$group_exam = DB::table('abit_examenGroup')->where('group_id', $request->abit_group)->get();
+					foreach ($group_exam as $ge) {
+						$tmp = DB::table('abit_examCard')->where('state_id', $AStatement_id)->where('exam_id', $ge->id)->count();
+						if ($tmp == 0)
+						{
+							$grafik = DB::table('abit_grafikExam')->where('predmet_id', $ge->predmet_id)->where('fo_id', $group->fo_id)->where('st_id', $group->st_id)->first();
+							if ($grafik != null)
+								DB::table('abit_examCard')->insert(['state_id' => $AStatement_id, 'exam_id' => $ge->id, 'date_exam' => $grafik->date_exam]);
+							else 
+								DB::table('abit_examCard')->insert(['state_id' => $AStatement_id, 'exam_id' => $ge->id]);
+							
+							$tmp = DB::table('pers_events')->where('pers_id', $request->pid)->where('event_id', '6')->first(); 	// ТУТ СТОИТ ФИКСИРОВАННОЕ ПОЛЕ EVENT_ID = 6, ЭТО КОСТЫЛЬ И ПРИДЕТСЯ МЕНЯТЬ КАЖДЫЙ ГОД ДАННОЕ ЧИСЛО ИЗ ТАБЛИЦЫ EVENTS
+							if ($tmp == null) $event_pers = DB::table('pers_events')->insertGetId([ 'pers_id' => $request->pid, 'event_id' => '6' ]);		// ТУТ СТОИТ ФИКСИРОВАННОЕ ПОЛЕ EVENT_ID = 6, ЭТО КОСТЫЛЬ И ПРИДЕТСЯ МЕНЯТЬ КАЖДЫЙ ГОД ДАННОЕ ЧИСЛО ИЗ ТАБЛИЦЫ EVENTS
+							else $event_pers = $tmp->id;
+							$tid = DB::table('abit_predmets')->where('id', $ge->predmet_id)->first()->test_id;
+							$tmp = DB::table('pers_tests')->where('pers_id', $request->pid)->where('test_id', $tid)->where('pers_event_id', $event_pers)->count();
+							if ($tmp == 0)
+							{
+								if ($grafik != null)
+									DB::table('pers_tests')->insert(['pers_id' => $request->pid, 'test_id' => $tid, 'pers_event_id' => $event_pers, 'start_time' => $grafik->date_exam ]);
+								else 
+									DB::table('pers_tests')->insert(['pers_id' => $request->pid, 'test_id' => $tid, 'pers_event_id' => $event_pers ]);
+							}
+						}
+					}
+					return redirect('/profile');
+				}
+				else return back();
+			}
+			else return back();
+		}
+		else return back(); 
+	}
+
+	public function checked_abit(Request $request)
+	{
+		DB::table('persons')->where('id', $request->pid)->update(['is_checked' => 'T']);
+		$person = DB::table('persons')->where('id', $request->pid)->first();
+		$pers_test = DB::table('pers_tests')->where('pers_id', $request->pid)->whereNull('start_time')->get();
+		foreach ($pers_test as $pt) {
+			DB::table('pers_tests')->where('id', $pt->id)->update([ 'start_time' => date('Y-m-d H', time()) ]);
+		}
+		$pers_test = DB::table('pers_tests as pt')
+						->leftjoin('tests as t', 't.id', 'pt.test_id')
+						->leftjoin('target_audience as ta', 'ta.id', 't.targetAudience_id')
+						->leftjoin('pers_events as pe', 'pe.id', 'pt.pers_event_id')
+						->select('pt.*', 't.discipline', 'ta.name as targetAudience_name')
+						->where('pe.event_id', '6')->where('pt.pers_id', $request->pid)->get(); // ТУТ СТАТИЧЕСКОЕ ЗНАЧЕНИЕ, КОТОРОЕ НУЖНО БУДЕТ МЕНЯТЬ КАЖДЫЙ ГОД EVENT_ID
+		Mail::send('MailsTemplate.MailCheckedAbit', ['person' => $person, 'pers_test' => $pers_test], function ($message) use ($person) {
+            $message->from('asu@ltsu.org', 'Информация с abit.ltsu.org');
+            $message->to($person->email, $person->famil.' '.$person->name.' '.$person->otch)->subject('Ваша учетная запись прошла проверку');
+        });
+		return back();
+		//return view('MailsTemplate.MailCheckedAbit', ['person' => $person, 'pers_test' => $pers_test]);
+	}
+
 	//Личная карточка куда попадает после регистрации (Абитуриент)
 	public function index_Profile(Request $request)
 	{
 		$request->session()->forget('active_list');
 		if ($request->session()->get('role_id') != 5) 
 		{
-			$pid = $request->pid;
-			session(['person_id' => $pid]);
+			if($request->has('pid'))
+			{
+				$pid = $request->pid;
+				session(['person_id' => $pid]);
+			}
+			else return redirect('/');
 		}
 		else $pid = $request->session()->get('person_id');
 		$role = session('role_id');
 		$users = session('user_name');
 		$person = DB::table('persons')->where('id', $pid)->first();
+		$pers_zno = DB::table('abit_sertificate')
+					->leftjoin('abit_predmets', 'abit_predmets.id', 'abit_sertificate.predmet_id')
+					->where('person_id', $pid)
+					->select('abit_sertificate.*', 'abit_predmets.name as pred_name')
+					->get();
+
+		$doc_obr = DB::table('abit_document as d')
+						->leftjoin('abit_typeDoc as td', 'td.id', 'd.doc_id')
+						->leftjoin('abit_typeEducation as te', 'te.id', 'd.educ_id')
+						->where('d.pers_id', $person->id)
+						->whereIn('d.doc_id', [1, 7])
+						->select('d.*', 'td.name as typeDoc_name', 'te.name as typeEduc_name')
+						->first();
+
 		$person_statements = DB::table('abit_statements')
 								->leftjoin('abit_group as g', 'g.id', 'abit_statements.group_id')
 								->leftjoin('abit_facultet as af', 'af.id', 'g.fk_id')
 								->leftjoin('abit_formObuch as fo', 'fo.id', 'g.fo_id')
+								->leftjoin('abit_stlevel as st', 'st.id', 'g.st_id')
 								->where('abit_statements.person_id', $person->id)
-								->select('af.name as fac_name', 'g.name as spec_name', 'abit_statements.shifr_statement', 'fo.name as form_obuch', 'abit_statements.date_return')
+								->select('af.name as fac_name', 'g.name as spec_name', 'abit_statements.shifr_statement', 'fo.name as form_obuch', 'abit_statements.date_return', 'abit_statements.id', 'st.name as stlevel_name')
 								->get();
+		$person_tests = [];
+		$persTests = [];
+		$successTest = [];
+		$statusTest = [];
+
+		foreach ($person_statements as $ps) {
+			if ($ps->date_return == null) {
+				$person_tests = DB::table('abit_examCard as ec')
+								->leftjoin('abit_examenGroup as eg', 'eg.id', 'ec.exam_id')
+								->leftjoin('abit_predmets as p', 'p.id', 'eg.predmet_id')
+								->leftjoin('pers_tests as pt', 'pt.test_id', 'p.test_id')
+								->leftjoin('pers_events as pe', 'pe.id', 'pt.pers_event_id')
+								->leftjoin('tests', 'tests.id', 'pt.test_id')
+								->where('ec.state_id', $ps->id)
+								->where('pt.pers_id', $person->id)
+								->select(
+									'pt.id',
+									'tests.id as test_id',
+									'tests.discipline',
+									'pt.status',
+									'pt.start_time',
+									'pt.end_time',
+									'pt.test_ball_correct',
+									'pt.last_active',
+									'tests.max_ball',
+									'tests.min_ball',
+									'tests.count_question',
+									'pt.minuts_spent',
+									'pt.pers_event_id'
+								)
+								->where('pe.event_id', '6') 								// ТУТ ФИКСИРОВАННОЕ ЗНАЧЕНИЕ - КОСТЫЛЬ, ПОНАДОБИТСЯ КАЖДЫЙ ГОД МЕНЯТЬ EVENT_ID НА НУЖНЫЙ
+								->get();
+				
+				$persTests += [$ps->id => $person_tests];
+
+				foreach ($person_tests as $test) {	
+					$testScatter_success = true;
+					$max_ball = 0;
+					$max_quest = 0;
+					$tc = DB::table('test_scatter')
+							->where('test_id', $test->test_id)
+							->orderBy('ball', 'asc')
+							->get();
+
+					if (count($tc) == 0) $testScatter_success = false;
+					
+					foreach ($tc as $tmp)
+					{
+						$max_ball += $tmp->ball_count * $tmp->ball;
+						$max_quest += $tmp->ball_count;
+		
+						$ttmp = DB::table('questions')->where('test_id', $test->test_id)->where('ball', $tmp->ball)->count();
+						if ($tmp->ball_count <= $ttmp) $testScatter_success= true;
+						else $testScatter_success = false;
+					}
+					if ($max_ball != $test->max_ball) $testScatter_success = false;
+					if ($max_quest != $test->count_question) $testScatter_success = false;
+					// добавить проверку на дату и время ивента этого теста
+					$event = DB::table('pers_events')
+								->leftjoin('events', 'events.id', 'pers_events.event_id')
+								->where('pers_events.id', $test->pers_event_id)
+								->select('events.*')
+								->first();
+		
+					if((strtotime($event->date_start) <= time()) && (strtotime($event->date_end) >= time()) || $test->status == 2) 
+					{
+						if ($test->start_time != null)
+						{ 
+							$timestampStart = strtotime($test->start_time);
+							$timestampEnd = time();
+							$seconds = ($timestampEnd - $timestampStart);
+							$testScatter_success = $seconds >= 172800 ? false : true; // 172800 sec == 2 days
+						}
+						else $testScatter_success = false;
+					}
+					else $testScatter_success = false;
+		
+					if ($testScatter_success) 
+					{
+						switch ($test->status) {
+							case 0:
+								$status = "<span onclick='startTest(".$test->id.",".$test->status.",\"".$person->user_hash."\");' style='cursor:pointer;background-color: forestgreen;' class='badge badge-primary'>Готов к прохождению</span>";
+								break;
+							case 1:
+								$status = "<span onclick='startTest(".$test->id.",".$test->status.",\"".$person->user_hash."\");' style='cursor:pointer;' class='badge badge-warning'>В процессе</span>";
+								break;
+							case 2:
+								$status = $test->test_ball_correct >= $test->min_ball ? 
+											"<span onclick='shortResult(".$test->id.",\"".$person->user_hash."\");' style='cursor:pointer;' class='badge badge-success'>Пройден</span>" : 
+											"<span onclick='shortResult(".$test->id.",\"".$person->user_hash."\");' style='cursor:pointer;' class='badge badge-danger'>Не пройден</span>";
+								break;
+							case 3:
+								$status = "<span onclick='startTest(".$test->id.",".$test->status.",\"".$person->user_hash."\");' style='cursor:pointer;' class='badge badge-danger'>Приостановлен</span>";
+								break;
+						}
+						$successTest += [
+							$test->id => "true"
+						];
+					}
+					else 
+					{
+						$status = "<span class='badge badge-danger'>Тест не доступен</span>";
+						$successTest += [
+							$test->id => "false"
+						];
+					}
+					$statusTest += [
+						$test->id => $status
+					];
+				}
+			}
+		}
+ 
+		$person_count_statements = DB::table('abit_statements')->where('person_id', $person->id)->whereNull('date_return')->count();
 		return view('ProfilePage.profile',
 			[
 				'title' => 'Личная карточка',
 				'role' => $role,
 				'person' => $person,
 				'username' => $users,
-				'person_statement' => $person_statements
+				'person_statement' => $person_statements,
+				'persTests'	=> $persTests,
+				'person_count_statements' => $person_count_statements,
+				'statusTest'    => $statusTest,
+				'successTest'   => $successTest,
+				'doc_obr'		=> $doc_obr,
+				'pers_zno'		=> $pers_zno
 			]);
 	}
-//-----------------------TEST-------------------------------------------------------------
-    public function uploadDOCUMENTS(Request $request)
-    {
-        $path = storage_path('public/uploads');
 
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
-
-        $file = $request->file('file');
-
-        $name = uniqid() . '_' . trim($file->getClientOriginalName());
-
-        $file->move($path, $name);
-
-        return response()->json([
-            'name'          => $name,
-            'original_name' => $file->getClientOriginalName(),
-        ]);
-    }
-    public function store(StoreProjectRequest $request)
-    {
-        $project = Project::create($request->all());
-
-        foreach ($request->input('document', []) as $file) {
-            $project->addMedia(storage_path('public/uploads/' . $file))->toMediaCollection('document');
-        }
-
-        return redirect()->route('projects.index');
-    }
-
-//------------------------------------------------------------------------------------
 	//Загрузка новых изображений - В ЛИЧНОМ КАБИНЕТЕ
 	public function upload_Photo(Request $request)
 	{
@@ -201,34 +469,6 @@ class ProfileController extends Controller
 
 	public function save_Profile(Request $request)
 	{
-		/*$this->validate($request, [
-			'FirstName' => 'required|string|min:2|max:50',
-			'Name' => 'required|string|min:2|max:50',
-			'SecondName' => 'required|string|min:2|max:50',
-			'gender' => 'required',
-			'phone_one' => 'required|string|min:10|max:20',
-			'phone_two' => 'string|min:10|max:20',
-			'birthday' => 'date',
-			'citizen' => 'string',
-			'language' => 'string',
-			'country' => 'required|string|min:2|max:50',
-			'adr_obl' => 'required|string|min:2|max:100',
-			'adr_rajon' => 'required|string|min:2|max:100',
-			'adr_city' => 'required|string|min:2|max:200',
-			'adr_street' => 'required|string|min:2|max:200',
-			'adr_house' => 'required|max:50',
-			'adr_flatroom' => 'max:5',
-			'type_doc' => 'required',
-			'pasp_date' => 'required|date',
-			'pasp_ser' => 'required|max:50',
-			'pasp_num' => 'required|max:50',
-			'pasp_vid' => 'required|max:500',
-			'indkod' => 'max:50',
-			'father_name' => 'max:50',
-			'father_phone' => 'max:50',
-			'mother_name' => 'max:50',
-			'mother_phone' => 'max:50',
-		  ]);*/
 		if ($request->session()->get('role_id') != 5) $pid = $request->pid;
 		else $pid = $request->session()->get('person_id');
 		$famil 			= trim($request->FirstName);
@@ -409,14 +649,14 @@ class ProfileController extends Controller
 					'doc_ser'	=> $doc_ser,
 					'doc_num'	=> $doc_num,
 					'app_num'	=> $app_num,
-					'sr_bal'	=> $sr_bal,
+					'sr_bal'	=> $sr_bal == '' ? null : $sr_bal,
 					'doc_vidan'	=> $doc_vidan
 				]
 			);
 		}
 		else
 		{
-			DB::table('abit_document')->where('pers_id', $pid)->update(
+			DB::table('abit_document')->where('pers_id', $pid)->where('doc_id', $abit_doc_id)->update(
 				[
 					'educ_id'	=> $educ_id,
 					'doc_id'	=> $doc_id,
@@ -425,7 +665,7 @@ class ProfileController extends Controller
 					'doc_ser'	=> $doc_ser,
 					'doc_num'	=> $doc_num,
 					'app_num'	=> $app_num,
-					'sr_bal'	=> $sr_bal,
+					'sr_bal'	=> $sr_bal == '' ? null : $sr_bal,
 					'doc_vidan'	=> $doc_vidan
 				]
 			);

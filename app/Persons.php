@@ -83,6 +83,7 @@ class Persons extends Model
         ->leftjoin('abit_predmets', 'abit_predmets.id', '=', 'abit_examenGroup.predmet_id')
         ->leftjoin('abit_statements', 'abit_statements.id', '=', 'abit_examCard.state_id')
         ->where('abit_statements.person_id', $id_person)
+        ->distinct()
         ->get();
 
         $k = [];
@@ -91,7 +92,7 @@ class Persons extends Model
         foreach ($query as $key) {
 
             $k +=[$i =>[$key->Predmet,
-                        date("d.m.Y", strtotime($key->DateExam)),
+            $key->DateExam != null ? date("d.m.Y", strtotime($key->DateExam)) : '',
                         $key->Ball,
                         ]];
             $i++;
@@ -126,7 +127,7 @@ class Persons extends Model
 
             $k +=[$i =>[$key->shifr,
                         $key->SpecName,
-                        date("d.m.Y", strtotime($key->DateReturn))]];
+                        $key->DateReturn != null ? date("d.m.Y", strtotime($key->DateReturn)) : '']];
             $i++;
         }
 

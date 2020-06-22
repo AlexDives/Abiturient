@@ -28,19 +28,6 @@ class RegisterController extends Controller
         else return 0;
     }
 
-   /* public function validator(array $data)
-    {
-        return Validator::make($data,
-            [
-            'login' => 'required|string|max:255',
-            'password' => 'required|string|min:6|confirmed',
-            'famil' => 'required|string|confirmed',
-            'name' => 'required|string|confirmed',
-            'otch' => 'required|string|confirmed',
-            'secret' => 'required|string|min:6|confirmed',
-        ]);
-    }*/
-
     public function create(Request $request)
     {
         if (!filter_var($request->Email, FILTER_VALIDATE_EMAIL)) return -2;

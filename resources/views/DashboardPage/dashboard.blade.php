@@ -4,6 +4,7 @@
     <!-- Page -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/clients.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 @endsection
 
 @section('scripts')
@@ -23,7 +24,7 @@
                 <div class="mb-2">Список абитуриентов</div>
                 <div class="mb-2" >
                     <p><a  href="{{ url('/insert_abit') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новый абитуриент</a></p>
-                    <p><a href="{{ url('/direction') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новое направление</a></p>
+                    @if($role == 1 || $role == 2) <p><a href="{{ url('/direction') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новое направление</a></p>@endif
                 </div>
 
             </h4>
@@ -81,7 +82,7 @@
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane fade active show" id="tab_spesial">
-                            <table class="table card-table" id="shtb">
+                            <table class="table card-table shtb" id="shtb">
                                 <thead>
                                 <tr>
                                     <th>Шифр</th>
@@ -93,7 +94,6 @@
 
                                 </tbody>
                             </table>
-
                         </div>
                         <div class="tab-pane fade" id="tab-predmet">
                             <table class="table card-table" id="dashboard-abit-exams-table">
@@ -110,12 +110,12 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
         <!-- / Clients sidebox -->
-
     </div>
     <!-- / Clients wrapper -->
+    <script>
+
+    </script>
 @endsection

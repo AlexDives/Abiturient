@@ -24,8 +24,7 @@ function errorMsg(msg) {
 
 function check_login() {
     var log = $("#Name_login").val().trim();
-    if (log != "")
-    {
+    if (log != "") {
         $.ajax({
             url: '/Check_login',
             type: 'POST',
@@ -87,7 +86,8 @@ $(document).on('click', '#reg', function(e) {
             }
         }
     });
-
+    check_email();
+    check_login();
     if (!empty) errorMsg('Все поля должны быть заполнены!');
     else $('#errorFillInput').html('');
     if (blockedLogin == false && blockedEmail == false && empty) {

@@ -38,19 +38,32 @@ Route::get('/PersonsExamsTable', 'DashboardController@PersonsExamsTable');
 Route::get('/direction', 'DirectionController@index');
 //=============== Отображение факультетот в шаблоне Направления ================================//
 Route::post('/direction/get_facultet', 'DirectionController@get_facultet');
+Route::post('/direction/get_group', 'DirectionController@get_group');
+Route::post('/direction/get_predmet', 'DirectionController@get_predmet');
+Route::post('/direction/search_predmet', 'DirectionController@search_predmet');
 //=============== Сохрание данных направления и теста ================================//
 Route::post('/direction/save', 'DirectionController@save');
 //=============== Отображение шаблона Направления ================================//
 Route::get('/scanPhoto', 'ScanController@index');
+
+Route::post('/upload_scan_photo', 'ScanController@Upload_Scan_Photo');
+
 //=============== Заполнение информации о направлении абитуриента(нового) ================================//
 Route::get('/insert_abit', 'ProfileController@index_InsertAbit')->middleware('check');
 //=============== Заполнение информации о направлении абитуриента(уже создан) ================================//
 Route::get('/success_insert_abit', 'ProfileController@index_Success_Abit')->middleware('check');
+Route::post('/statement/get_facultet', 'ProfileController@get_facultet')->middleware('check');
+Route::post('/statement/get_stlevel', 'ProfileController@get_stlevel')->middleware('check');
+Route::post('/statement/get_form_obuch', 'ProfileController@get_form_obuch')->middleware('check');
+Route::post('/statement/get_group', 'ProfileController@get_group')->middleware('check');
+Route::post('/statement/create', 'ProfileController@statement_create')->middleware('check');
+Route::get('/statement/return', 'ProfileController@statement_return')->middleware('check');
 
 //=============== Разрыв сессии ================================//
 Route::get('logout', 'DashboardController@logout')->name('logout');
 //=============== Отображение страницы Личной карты абитуриента ================================//
 Route::get('/profile', 'ProfileController@index_Profile')->name('profile')->middleware('check');
+Route::get('/checked_abit', 'ProfileController@checked_abit')->middleware('check');
 //=============== Отображение страницы Личной карты абитуриента ================================//
 Route::post('/profilesave', 'ProfileController@save_Profile')->middleware('check');
 //=============== Удаление сертификата абитуриента ================================//
@@ -59,6 +72,7 @@ Route::post('/sert/del', 'ProfileController@delete_sertificate')->middleware('ch
 Route::post('/upload/dock', 'ProjectsController@uploadDOCUMENTS')->name('updlode.dock');
 //=============== Загрузка фотографии абитуриента ================================//
 Route::post('/upload/photo', 'ProfileController@upload_Photo')->middleware('check');
+
 
 //=============== КАК-ТО ПОТОМ =================================================//
 //=============== Отображение страницы Графиков ================================//

@@ -25,61 +25,6 @@
 	<script src="{{ asset('assets/vendor/libs/vanilla-text-mask/vanilla-text-mask.js') }}"></script>
 	<script src="{{ asset('assets/vendor/libs/vanilla-text-mask/text-mask-addons.js') }}"></script>
 	<script>
-	//Загрузка фото
-		/*$(function() {
-			$('#dropzone-demo').dropzone({
-				parallelUploads: 2,
-				maxFilesize:     50000,
-				filesizeBase:    1000,
-				addRemoveLinks:  true,
-				acceptedFiles: "image/jpeg, image/png, image/gif",
-			});
-
-			Dropzone.prototype.uploadFiles = function(files) {
-				var minSteps         = 6;
-				var maxSteps         = 60;
-				var timeBetweenSteps = 100;
-				var bytesPerStep     = 100000;
-				//var isUploadSuccess  = Math.round(Math.random());
-
-				var self = this;
-
-				for (var i = 0; i < files.length; i++) {
-
-					var file = files[i];
-					var totalSteps = Math.round(Math.min(maxSteps, Math.max(minSteps, file.size / bytesPerStep)));
-
-					for (var step = 0; step < totalSteps; step++) {
-						var duration = timeBetweenSteps * (step + 1);
-
-						setTimeout(function(file, totalSteps, step) {
-							return function() {
-								file.upload = {
-									progress: 100 * (step + 1) / totalSteps,
-									total: file.size,
-									bytesSent: (step + 1) * file.size / totalSteps
-								};
-
-								self.emit('uploadprogress', file, file.upload.progress, file.upload.bytesSent);
-								if (file.upload.progress == 100) {
-
-									if (totalSteps) {
-										file.status =  Dropzone.SUCCESS;
-										self.emit('success', file, 'success', null);
-									} else {
-										file.status =  Dropzone.ERROR;
-										self.emit('error', file, 'Some upload error', null);
-									}
-
-									self.emit('complete', file);
-									self.processQueue();
-								}
-							};
-						}(file, totalSteps, step), duration);
-					}
-				}
-			};
-		});*/
 		//даты рождения абитуриента
 		vanillaTextMask.maskInput({
 			inputElement: $('#date_birth')[0],
@@ -89,6 +34,12 @@
 		//даты выдачи
 		vanillaTextMask.maskInput({
 			inputElement: $('#date_vidach')[0],
+			mask: [/\d/, /\d/, '.', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/],
+			pipe: textMaskAddons.createAutoCorrectedDatePipe('dd.mm.yyyy')
+		});
+		//даты выдачи
+		vanillaTextMask.maskInput({
+			inputElement: $('#date_sert')[0],
 			mask: [/\d/, /\d/, '.', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/],
 			pipe: textMaskAddons.createAutoCorrectedDatePipe('dd.mm.yyyy')
 		});
@@ -346,7 +297,7 @@
 											<label class="form-label">Дата выдачи
 												<span class="text-danger">*</span>
 											</label>
-											<input name="pasp_date" id="date_vidach" type="text" class="form-control " placeholder="__.__.____" value="{{ isset($person) ? $person->pasp_date : ''}}" >
+											<input name="pasp_date" id="date_vidach" type="text" class="form-control " placeholder="__.__.____" value="{{ isset($person) ? date('d.m.Y', strtotime($person->pasp_date)) : ''}}" >
 										</div>
 									</div>
 									<div class="col">
@@ -417,7 +368,7 @@
 								<div class="row">
 									<div class="col">
 										<label class="form-label">Дата выдачи</label>
-										<input type="text" id="date_vidach_doc"  class="form-control " placeholder="__.__.____" name="doc_date" value="{{ isset($doc_pers) ? $doc_pers->doc_date : '' }}">
+										<input type="text" id="date_vidach_doc"  class="form-control " placeholder="__.__.____" name="doc_date" value="{{ isset($doc_pers) ? date('d.m.Y', strtotime($doc_pers->doc_date)) : '' }}">
 									</div>
 								</div>
 								<div class="row">
@@ -520,7 +471,7 @@
 										</div>
 										<div class="form-group col-md-4">
 											<label class="form-label">Дата выдачи</label>
-											<input type="text" class="form-control required" name="zno_date" id="date_sert">
+											<input type="text" placeholder="__.__.____" class="form-control required" name="zno_date" id="date_sert">
 										</div>
 									</div>
 									<div class="form-group">

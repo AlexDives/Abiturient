@@ -25,35 +25,6 @@ class LoginController extends Controller
     }
     public function login(Request $request)
     {
-       /* $v = Validator::make($request->all(),
-            [
-                'email' => 'required|max:255',
-                'password' => 'required',
-            ]);
-
-
-        if ($v->fails())
-        {
-            return redirect()->back()->withErrors($v->errors());
-        }*/
-       /* if($request != null)
-        {
-            $user = DB::table('users')
-                ->leftJoin('user_roles', 'user_roles.user_id', '=', 'users.id')
-                ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
-                ->select('roles.name as role_name','users.*')
-                ->where(
-                    ['users.login' => $request->email]
-                )
-                ->first();
-
-                if(Hash::check('users.password', $request->password))
-                {
-                    session(['user_id' => $user->login, 'role_id' => $user->r_name]);
-                    return redirect('/dashboard');
-                }
-        }
-        //return back();*/
         $user = DB::table('users')
             ->leftJoin('user_roles', 'user_roles.user_id', '=', 'users.id')
             ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
@@ -67,6 +38,7 @@ class LoginController extends Controller
             //-----------Если роль id = 1 ------------------------//
             if (Hash::check($request->password , $user->password))
             {
+                DB::table('persons')->where('id', $user->id)->update(['pers_type' => 'a']);
                 session(
                     [
                         'user_id' => $user->id,

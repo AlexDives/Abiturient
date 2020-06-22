@@ -92,3 +92,18 @@
 .form-label-sticky label:last-child span:first-child{
   padding-left: 20px;
 }
+.hidden_card_table{
+ display: none;
+ min-width: 100%;
+}
+.visible_card_table_td:hover{
+ cursor:pointer;
+}
+#shtb>tbody>tr>td:last-child{
+ padding: 0px;
+ padding-right: 25px;
+ padding-top: 10px;
+}
+.return-row{
+ background-color: #ffad5e;
+}
