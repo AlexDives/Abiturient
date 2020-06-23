@@ -4,6 +4,7 @@
 	<link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/vendor/libs/dropzone/dropzone.css')}}">
+	<link rel="stylesheet" href="{{ asset('css/style.css')}}">
 @endsection
 
 @section('scripts')
@@ -80,6 +81,9 @@
 										console.log(pair[0]+ ', '+ pair[1]);
 									}
 								});
+								self.on("success", function(first,response) {
+					    $('.scan_suc_msg').text('Документы успешно отсканированны!');
+					  });
 							},
 						});
 					});
@@ -88,6 +92,12 @@
 			</div>
 		</div>
 	</div>
-	<input type="submit" class="btn btn-primary" id="scan_btn" value="Отправить скан-копии">
-	<button class="btn btn-primary" value=""><a href="/profile" style="color:White">Назад</a></button>
+	<div class="scan-card-footer">
+		<span class="scan_suc_msg"></span>
+		<span>
+		<input type="submit" class="btn btn-primary" id="scan_btn" value="Отправить скан-копии">
+		<button class="btn btn-primary" value=""><a href="/profile" style="color:White">Назад</a></button>
+		</span>
+	</div>
+
 @endsection

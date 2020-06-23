@@ -216,6 +216,12 @@
 										@endforeach
 									</select>
 								</div>
+								<div class="form-group">
+									<label class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input" value="1" name="hostel_need" {{ isset($person) ? $person->hostel_need == '1' ? 'checked' : '' : ''}}>
+										<span class="custom-control-label">Требуется общежитие</span>
+									</label>
+								</div>
 							</div>
 						</div>
 

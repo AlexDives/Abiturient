@@ -130,11 +130,12 @@ class DirectionController extends Controller
                         'minid' => $request->abit_shifr
                     ]
                 );
-                DB::table('abit_examenGroup')->where('group_id', $request->agid)->delete();
+                //DB::table('abit_examenGroup')->where('group_id', $request->agid)->delete();
                 if (count($request->predmet_id) > 0) {
                     foreach($request->predmet_id as $pid)
                     {
-                        DB::table('abit_examenGroup')->insert(['predmet_id' => $pid, 'group_id' => $request->agid]);
+                        if (DB::table('abit_examenGroup')->where('predmet_id', $pid)->where('group_id', $request->agid)->count() == 0)
+                            DB::table('abit_examenGroup')->insert(['predmet_id' => $pid, 'group_id' => $request->agid]);
                     }
                 }
             }

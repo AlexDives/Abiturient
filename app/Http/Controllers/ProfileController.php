@@ -24,7 +24,17 @@ class ProfileController extends Controller
 
 		if ($request->session()->get('role_id') != 5) 
 		{
-			$pid = $request->session()->has('person_id') ? $request->session()->get('person_id') : $request->pid;
+			if (isset($request->pid))
+			{
+				if ($request->pid == -1)
+				{
+					$pid = $request->pid;
+				}
+			} 
+			else 
+			{
+				$pid = $request->session()->has('person_id') ? $request->session()->get('person_id') : $request->pid;
+			}
 		}
 		else $pid = $request->session()->get('person_id');
 		if (isset($pid))
@@ -480,6 +490,8 @@ class ProfileController extends Controller
 		$email_abit 	= trim($request->email_abit);
 		$birthday 		= trim($request->birthday);
 		$citizen 		= trim($request->citizen);
+		$hostel_need 	= isset($request->hostel_need) ? trim($request->hostel_need) : 0;
+		
 		$en = 'F';
 		$fr = 'F';
 		$de = 'F';
@@ -574,6 +586,8 @@ class ProfileController extends Controller
 				'father_phone'      => $father_phone,
 				'mother_name'       => $mother_name,
 				'mother_phone'      => $mother_phone,
+				'hostel_need'       => $hostel_need,
+				'pers_type'			=> 'a'
 			]);
 		}
 		else
@@ -627,7 +641,8 @@ class ProfileController extends Controller
 				'father_phone'      => $father_phone,
 				'mother_name'       => $mother_name,
 				'mother_phone'      => $mother_phone,
-				'pers_type'			=> 'a'
+				'pers_type'			=> 'a',
+				'hostel_need'       => $hostel_need
 			]);
 
 			Mail::send('RegisterPage.email', ['login' => $login, 'pass' => $pass, 'fio' => $famil.' '.$name.' '.$otch], function ($message) use ($request) {

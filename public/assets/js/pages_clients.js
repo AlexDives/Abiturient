@@ -140,9 +140,13 @@ $(function() {
         },
         //Отрисовать кнопки
         createdRow: function(row, data, index) {
-            $('td', row).eq(6).html('').append(
-                '<a href="/profile?pid=' + data[0] + '" class="btn btn-default btn-xs icon-btn md-btn-flat product-tooltip" title="Открыть"><i class="ion ion-md-create"></i></a>&nbsp;' +
-                '<a href="javascript:void(0)" class="btn btn-default btn-xs icon-btn md-btn-flat product-tooltip" title="Удалить"><i class="ion ion-md-close"></i></a>'
+
+           if($(row).children(':nth-child(2)').text() != ''){
+            $(row).children(':nth-child(2)').addClass('checkd-row');
+           }
+
+            $('td', row).eq(7).html('').append(
+                '<a href="/profile?pid=' + data[0] + '" class="btn btn-default btn-xs icon-btn md-btn-flat product-tooltip" title="Открыть"><i class="ion ion-md-create"></i></a>&nbsp;'
             );
         }
     });

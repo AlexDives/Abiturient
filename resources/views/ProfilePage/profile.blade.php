@@ -12,6 +12,7 @@
 	<script src="{{ asset('js/toastr.min.js') }}"></script>
 	<script src="{{ asset('js/profile.js') }}"></script>
 	<script>
+		var role = {{ $role }};
         function startTest(testPersId, status, hash)
         {
             if (testPersId != 0 && status != 2)
@@ -50,7 +51,9 @@
 		<div class="media-body ml-4">
 			<h4 class="font-weight-bold mb-0">{{ $person->famil.' '.$person->name.' '.$person->otch }}</h4>
 			<div class="text-muted mb-2">E-mail: {{ $person->email }}</div>
+			<span class="profile-time-func">
 			@if($person->is_checked == 'F' || $role != 5)
+
 				<a href="javascript:void(0)" class="btn btn-primary btn-sm" onclick="FindFile();"><i class="ion ion-md-photos"></i> Фото</a>
 				<form action="#" method="POST" enctype="multipart/form-data" id="loadPhoto" style="position:absolute;overflow: hidden;display:block;height:0px;width:0px;">
 					<input type="file"   id="FindFile" accept="image/jpeg,image/png,image/gif" name="FindFile" onchange="LoadFile();" style="display: none">
@@ -68,6 +71,7 @@
 			@else
 				Проверено
 			@endif
+		</span>
 		</div>
 	</div>
 
@@ -83,14 +87,14 @@
 					<td>Нуждается в общежитии:</td>
 					<td><span class="badge badge-outline-success">{{ $person->hostel_need == 1 ? 'Да' : 'Нет' }}</span></td>
 				</tr>
-				<tr>
+				<!--<tr>
 					<td>Количество фотографий:</td>
 					<td><span class="badge badge-outline-success">{{ $person->count_photo }}</span></td>
 				</tr>
 				<tr>
 					<td>Оригинал документов:</td>
 					<td><span class="badge badge-outline-danger">{{ $person->is_orig == 'T' ? 'Да' : 'Нет' }}</span></td>
-				</tr>
+				</tr>-->
 				</tbody>
 			</table>
 		</div>
@@ -118,7 +122,7 @@
 								<td class="align-middle">{{ $ps->spec_name }}</td>
 								<td class="align-middle">{{ $ps->stlevel_name }}</td>
 								<td class="align-middle">{{ $ps->form_obuch }}</td>
-								<td>@if($ps->date_return == null)<a href="{{ url('/statement/return?ag=').$ps->id.'&pid='.$person->id }}" class="ion ion-md-close text-light"></a>@else <span class="ion ion-md-close text-light"></span> @endif</td>
+								<td>@if($person->is_checked == 'F')@if($ps->date_return == null)<a href="{{ url('/statement/return?ag=').$ps->id.'&pid='.$person->id }}" class="ion ion-md-close text-light"></a>@else <span class="ion ion-md-close text-light"></span> @endif @endif</td>
 							</tr>
 							<tr>
 								<td colspan="5">
@@ -402,4 +406,5 @@
 			</div>
 		</div>
 	</div>
+	<script src="{{ asset('js/timescript.js') }}"></script>
 @endsection

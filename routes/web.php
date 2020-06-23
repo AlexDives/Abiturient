@@ -10,14 +10,35 @@
 | 	содержит группу промежуточного программного обеспечения "web" Теперь создайте что-то великое!
 |
 */
+//=============== ГРУППА РОУТОВ ДЛЯ ПРОВЕРКИ ВРЕМЕНИ РАБОТЫ ================================//
+Route::get('/timeout', 'Error\ErrorsController@Timeout');
+Route::middleware(['timeout'])->group(function () {
+ Route::post('register', 'RegisterController@create')->name('register');
+});
+
+ //=============== ГРУППА РОУТОВ ДЛЯ ПРОВЕРКИ АВТОРИЗАЦИИ И ВРЕМЕНИ РАБОТЫ ================================//
+Route::middleware(['check','timeout'])->group(function () {
+ //=============== Заполнение информации о направлении абитуриента(нового) ================================//
+ Route::get('/insert_abit', 'ProfileController@index_InsertAbit');
+ //=============== Заполнение информации о направлении абитуриента(уже создан) ================================//
+ Route::get('/success_insert_abit', 'ProfileController@index_Success_Abit');
+ Route::post('/statement/get_facultet', 'ProfileController@get_facultet');
+ Route::post('/statement/get_stlevel', 'ProfileController@get_stlevel');
+ Route::post('/statement/get_form_obuch', 'ProfileController@get_form_obuch');
+ Route::post('/statement/get_group', 'ProfileController@get_group');
+ Route::post('/statement/create', 'ProfileController@statement_create');
+ Route::get('/statement/return', 'ProfileController@statement_return');
+ Route::get('/checked_abit', 'ProfileController@checked_abit');
+ Route::get('/scanPhoto', 'ScanController@index');
+});
 
 Route::get('/', 'LoginController@check');
 //=============== Отображение страницы Авторизация ================================//
 Route::post('login', 'LoginController@login')->name('login');
 //=============== Отображение страницы Регистрация ================================//
-Route::post('register', 'RegisterController@create')->name('register');
+
 //=============== Процесс регистрации нового пользователя =========================//
-Route::get('/register', 'RegisterController@index');
+Route::get('/register', 'RegisterController@index')->middleware('timeout');
 //=============== Проверка на существующий логин =========================//
 Route::post('/Check_login', 'RegisterController@check_login');
 //=============== Проверка на существующий email =========================//
@@ -44,26 +65,16 @@ Route::post('/direction/search_predmet', 'DirectionController@search_predmet');
 //=============== Сохрание данных направления и теста ================================//
 Route::post('/direction/save', 'DirectionController@save');
 //=============== Отображение шаблона Направления ================================//
-Route::get('/scanPhoto', 'ScanController@index');
 
 Route::post('/upload_scan_photo', 'ScanController@Upload_Scan_Photo');
 
-//=============== Заполнение информации о направлении абитуриента(нового) ================================//
-Route::get('/insert_abit', 'ProfileController@index_InsertAbit')->middleware('check');
-//=============== Заполнение информации о направлении абитуриента(уже создан) ================================//
-Route::get('/success_insert_abit', 'ProfileController@index_Success_Abit')->middleware('check');
-Route::post('/statement/get_facultet', 'ProfileController@get_facultet')->middleware('check');
-Route::post('/statement/get_stlevel', 'ProfileController@get_stlevel')->middleware('check');
-Route::post('/statement/get_form_obuch', 'ProfileController@get_form_obuch')->middleware('check');
-Route::post('/statement/get_group', 'ProfileController@get_group')->middleware('check');
-Route::post('/statement/create', 'ProfileController@statement_create')->middleware('check');
-Route::get('/statement/return', 'ProfileController@statement_return')->middleware('check');
+
 
 //=============== Разрыв сессии ================================//
 Route::get('logout', 'DashboardController@logout')->name('logout');
 //=============== Отображение страницы Личной карты абитуриента ================================//
 Route::get('/profile', 'ProfileController@index_Profile')->name('profile')->middleware('check');
-Route::get('/checked_abit', 'ProfileController@checked_abit')->middleware('check');
+
 //=============== Отображение страницы Личной карты абитуриента ================================//
 Route::post('/profilesave', 'ProfileController@save_Profile')->middleware('check');
 //=============== Удаление сертификата абитуриента ================================//

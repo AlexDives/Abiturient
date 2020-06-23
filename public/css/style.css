@@ -107,3 +107,55 @@
 .return-row{
  background-color: #ffad5e;
 }
+.scan-card-footer{
+ display: flex;
+ flex-direction: column;
+}
+.scan_suc_msg {
+ padding: 10px;
+ color: green;
+}
+.profile-time-func,
+.text-reg-func{
+ display: none;
+}
+.error-body{
+ margin: 0;
+ padding: 0;
+}
+.error-page-wrapper{
+ width: 100%;
+ min-height: 100vh;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ background-color: #f8f8f8;
+ font-family: "Roboto";
+}
+
+.error-page-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 750px;
+    text-align: center;
+}
+.error-page-block .col:nth-child(2){
+    margin-top: 50px;
+    font-weight: 900;
+    font-size: 1.3rem;
+}
+.error-page-block .col:nth-child(2) b{
+    color: #fc5a5c;
+}
+.error-page-block .col:nth-child(3){
+  margin-top: 50px;
+}
+.error-page-block .col:nth-child(3) a{
+    font-size: 1.2rem;
+    color: #fc5a5c;
+}
+.checkd-row{
+ color: green;
+}

@@ -23,7 +23,7 @@
             <h4 class="d-flex flex-wrap justify-content-between align-items-center font-weight-bold pt-2 mb-4">
                 <div class="mb-2">Список абитуриентов</div>
                 <div class="mb-2" >
-                    <p><a  href="{{ url('/insert_abit') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новый абитуриент</a></p>
+                    <p><a  href="{{ url('/insert_abit?pid=-1') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новый абитуриент</a></p>
                     @if($role == 1 || $role == 2) <p><a href="{{ url('/direction') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новое направление</a></p>@endif
                 </div>
 
@@ -37,6 +37,7 @@
                     <thead>
                     <tr>
                         <th>№</th>
+                        <th>Проверен</th>
                         <th>Ф.И.О.</th>
                         <th>Льготы</th>
                         <th>Телефон №1</th>

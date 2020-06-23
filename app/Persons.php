@@ -15,20 +15,26 @@ class Persons extends Model
 
     $item_abit = Persons::
     selectRaw(
-      'persons.id as id_Abit, persons.famil as FirstName,
+      'distinct(persons.id) as id_Abit, persons.famil as FirstName,
       persons.name as Name, persons.otch as LastName,
       persons.email, persons.phone_one as PhoneOne, persons.phone_two as PhoneTwo,
       (select count(ap.id) from abit_persPrivilege ap
-          where ap.pers_id = persons.id) as countPriv'
+          where ap.pers_id = persons.id) as countPriv, persons.is_checked as Checked'
       )
+      ->join('abit_statements', 'abit_statements.person_id', '=', 'persons.id')
       ->where('persons.pers_type', 'a')
+      ->whereNull('abit_statements.date_return')
+      ->orderBy('FirstName', 'ASC')
       ->get();
       $k = [];
       $i = 0;
       foreach ($item_abit as $key) {
         if($key->countPriv != 0) $privilage = '&#10003;';
         else   $privilage = '';
+        if($key->Checked === 'T' ) $Checked = '&#10003;';
+        else $Checked = '';
           $k +=[$i =>[$key->id_Abit,
+                      $Checked,
                       $key->FirstName.' '.$key->Name.' '.$key->LastName, //FIO
                       $privilage,
                       $key->PhoneOne,

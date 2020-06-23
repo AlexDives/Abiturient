@@ -37,9 +37,10 @@
                 </div>
             </form>
             <!-- / Form -->
-            <div class="text-center text-muted">
+            <div class="text-center text-muted text-reg-func">
                 Перейти на <a href="{{ url('/register') }}">Регистрацию</a>
             </div>
         </div>
     </div>
+<script src="{{ asset('js/timescript.js') }}"></script>
 @endsection
