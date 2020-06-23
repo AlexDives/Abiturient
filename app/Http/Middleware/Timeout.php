@@ -12,7 +12,7 @@ class Timeout
     {
        $time = date("G");
 
-       if(($time >= 9 && $time < 15) || session('role_id') != 5)
+       if(($time >= 9 && $time < 15) || (session('role_id') >= 1 && session('role_id') <= 3))
        {
         return $next($request);
        }else return redirect('/timeout');

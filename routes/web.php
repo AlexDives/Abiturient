@@ -14,6 +14,7 @@
 Route::get('/timeout', 'Error\ErrorsController@Timeout');
 Route::middleware(['timeout'])->group(function () {
  Route::post('register', 'RegisterController@create')->name('register');
+ Route::get('/register', 'RegisterController@index');
 });
 
  //=============== ГРУППА РОУТОВ ДЛЯ ПРОВЕРКИ АВТОРИЗАЦИИ И ВРЕМЕНИ РАБОТЫ ================================//
@@ -38,7 +39,7 @@ Route::post('login', 'LoginController@login')->name('login');
 //=============== Отображение страницы Регистрация ================================//
 
 //=============== Процесс регистрации нового пользователя =========================//
-Route::get('/register', 'RegisterController@index')->middleware('timeout');
+
 //=============== Проверка на существующий логин =========================//
 Route::post('/Check_login', 'RegisterController@check_login');
 //=============== Проверка на существующий email =========================//
