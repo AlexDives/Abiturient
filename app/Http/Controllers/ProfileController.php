@@ -385,7 +385,7 @@ class ProfileController extends Controller
 					}
 					else $testScatter_success = false;
 		
-					if ($testScatter_success) 
+					if ($testScatter_success || in_array($test->status, [2, 3])) 
 					{
 						switch ($test->status) {
 							case 0:
