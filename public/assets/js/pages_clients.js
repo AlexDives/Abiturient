@@ -138,6 +138,7 @@ $(function() {
                 }
             }
         },
+        "order": [[1, "asc" ]],
         //Отрисовать кнопки
         createdRow: function(row, data, index) {
 
