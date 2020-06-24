@@ -1,7 +1,7 @@
 $(function() {
     var d = new Date();
     var time = d.getHours();
-    if ((time < 9 || time >= 15) && role == 5) {
+    if (( /*time < 9 || time >= 15*/ true) && role == 5) {
         $('.profile-time-func').detach();
         $('.text-reg-func').detach();
     } else {
