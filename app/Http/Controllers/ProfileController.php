@@ -262,7 +262,7 @@ class ProfileController extends Controller
 						->select('pt.*', 't.discipline', 'ta.name as targetAudience_name')
 						->where('pe.event_id', '6')->where('pt.pers_id', $request->pid)->get(); // ТУТ СТАТИЧЕСКОЕ ЗНАЧЕНИЕ, КОТОРОЕ НУЖНО БУДЕТ МЕНЯТЬ КАЖДЫЙ ГОД EVENT_ID
 		Mail::send('MailsTemplate.MailCheckedAbit', ['person' => $person, 'pers_test' => $pers_test], function ($message) use ($person) {
-            $message->from('asu@ltsu.org', 'Информация с abit.ltsu.org');
+            $message->from('abiturient@ltsu.org', 'Информация с abit.ltsu.org');
             $message->to($person->email, $person->famil.' '.$person->name.' '.$person->otch)->subject('Ваша учетная запись прошла проверку');
         });
 		return back();
@@ -646,7 +646,7 @@ class ProfileController extends Controller
 			]);
 
 			Mail::send('RegisterPage.email', ['login' => $login, 'pass' => $pass, 'fio' => $famil.' '.$name.' '.$otch], function ($message) use ($request) {
-				$message->from('asu@ltsu.org', 'ЛНУ имени Тараса Шевченко');
+				$message->from('abiturient@ltsu.org', 'ЛНУ имени Тараса Шевченко');
 				$message->to($request->email_abit, $request->First_Name.' '.$request->Name.' '.$request->Last_Name)->subject('Создание аккаунта на abit.ltsu.org');
 			});
 		}
