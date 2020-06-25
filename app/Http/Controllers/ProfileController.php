@@ -256,7 +256,17 @@ class ProfileController extends Controller
 		$person = DB::table('persons')->where('id', $request->pid)->first();
 		$pers_test = DB::table('pers_tests')->where('pers_id', $request->pid)->whereNull('start_time')->get();
 		foreach ($pers_test as $pt) {
-			DB::table('pers_tests')->where('id', $pt->id)->update([ 'start_time' => date('Y-m-d H', time()) ]);
+			$statements = DB::table('abit_statements as s')
+							->leftjoin('abit_examCard as ec', 'ec.state_id', 's.id')
+							->leftjoin('abit_examenGroup as eg', 'eg.id', 'ec.exam_id')
+							->leftjoin('abit_predmets as pr', 'pr.id', 'eg.predmet_id')
+							->leftjoin('abit_group as g', 'g.id', 's.group_id')
+							->where('s.person_id', $person->id)
+							->where('pr.test_id', $pt->test_id)
+							->whereIn('g.st_id', [1, 2])
+							->count();
+			if ($statements == 0)
+				DB::table('pers_tests')->where('id', $pt->id)->update([ 'start_time' => date('Y-m-d H', time()) ]);
 		}
 		$pers_test = DB::table('pers_tests as pt')
 						->leftjoin('tests as t', 't.id', 'pt.test_id')

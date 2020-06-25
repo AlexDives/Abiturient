@@ -26,6 +26,8 @@ class Persons extends Model
       ->join('abit_facultet', 'abit_facultet.id', '=', 'abit_group.fk_id')
       ->join('user_roles', 'user_roles.abit_branch_id', '=', 'abit_facultet.branch_id')
       ->where('persons.pers_type', 'a')
+      ->where('persons.famil','<>', '')
+      ->where('persons.email','<>', '')
       ->where('user_roles.user_id', session('user_id'))
       //->whereNull('abit_statements.date_return')
       ->orderBy('FirstName', 'ASC')
