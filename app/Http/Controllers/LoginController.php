@@ -28,7 +28,7 @@ class LoginController extends Controller
         $user = DB::table('users')
             ->leftJoin('user_roles', 'user_roles.user_id', '=', 'users.id')
             ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
-            ->select('roles.name as role_name','users.*')
+            ->select('roles.name as role_name','users.*', 'user_roles.abit_branch_id')
             ->where(
                 ['users.login' => $request->email]
             )
@@ -43,7 +43,8 @@ class LoginController extends Controller
                     [
                         'user_id' => $user->id,
                         'user_name' =>$user->login,
-                        'role_id' => $user->role_name
+                        'role_id' => $user->role_name,
+                        'branch_id' => $user->abit_branch_id
                     ]);
                 return redirect('/dashboard');
             }

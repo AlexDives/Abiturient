@@ -108,6 +108,9 @@ class ProfileController extends Controller
 		}
 		else $pid = $request->session()->get('person_id');
 
+		if ($request->session()->has('branch_id'))
+			$abit_branch = DB::table('abit_branch')->where('id', session('branch_id'))->get();
+		else
 		$abit_branch = DB::table('abit_branch')->get();
 
 		return view('ProfilePage.success_profile',
@@ -376,10 +379,11 @@ class ProfileController extends Controller
 					{
 						if ($test->start_time != null)
 						{ 
-							$timestampStart = strtotime($test->start_time);
+							/*$timestampStart = strtotime($test->start_time);
 							$timestampEnd = time();
 							$seconds = ($timestampEnd - $timestampStart);
-							$testScatter_success = $seconds >= 172800 ? false : true; // 172800 sec == 2 days
+							$testScatter_success = $seconds >= 172800 ? false : true; */// 172800 sec == 2 days
+							$testScatter_success = true;
 						}
 						else $testScatter_success = false;
 					}
