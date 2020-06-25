@@ -24,7 +24,7 @@
                 <div class="mb-2">Список абитуриентов</div>
                 <div class="mb-2" >
                     <p><a  href="{{ url('/insert_abit?pid=-1') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новый абитуриент</a></p>
-                    @if($role == 1 || $role == 2) <p><a href="{{ url('/direction') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новое направление</a></p>@endif
+                    @if($role == 1) <p><a href="{{ url('/direction') }}" class="btn btn-primary rounded-pill d-block"><span class="ion ion-md-add"></span>&nbsp; Новое направление</a></p>@endif
                 </div>
 
             </h4>
