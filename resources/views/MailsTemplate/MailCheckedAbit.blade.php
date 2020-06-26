@@ -31,7 +31,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $pt->discipline }}</td>
                         <td>{{ $pt->targetAudience_name }}</td>
-                        <td>{{ date('d.m.Y H:i', strtotime($pt->start_time)) }}</td>
+                        <td>{{ isset($pt->start_time) ? date('d.m.Y H:i', strtotime($pt->start_time)) : '' }}</td>
                     </tr>
                 @endforeach
             </table>
